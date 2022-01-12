@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import "@arcgis/core/assets/esri/themes/light/main.css";
+import Header from "./components/Header";
+import EsriMap from "./components/EsriMap";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header
+        color="white"
+        backgroundColor="#212121"
+        title="FiSH (Field Sustainability Helper)"
+      ></Header>
+      <EsriMap webMapId={"e691172598f04ea8881cd2a4adaa45ba"}></EsriMap>
     </div>
   );
 }
