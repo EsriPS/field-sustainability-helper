@@ -12,6 +12,8 @@ jobs:
 
       - name: Install and Build
         working-directory: field-sustainability-helper
+        env:
+          CI: false
         run: |
           npm ci
           npm run build
