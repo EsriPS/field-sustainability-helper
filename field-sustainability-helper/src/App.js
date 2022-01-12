@@ -1,5 +1,6 @@
 import "./App.css";
 import "@arcgis/core/assets/esri/themes/light/main.css";
+import { strings, items } from "./configs/default";
 import Header from "./components/Header";
 import EsriMap from "./components/EsriMap";
 import InputPane from "./components/InputPane";
@@ -20,11 +21,11 @@ function App() {
       <Header
         color="white"
         backgroundColor="#212121"
-        title="FiSH (Field Sustainability Helper)"
+        title={strings.title}
       ></Header>
       <section className="container">
         <InputPane label="Draw Field Boundary" view={view}></InputPane>
-        <EsriMap webMapId={"e691172598f04ea8881cd2a4adaa45ba"} setView={setMapView}></EsriMap>
+        <EsriMap webMapId={items.webMap} setView={setMapView}></EsriMap>
       </section>
     </div>
   );

@@ -25,6 +25,7 @@ function InputPane({ label, view }) {
             "lasso-selection": false,
             "rectangle-selection": false
           },
+          undoRedoMenu: false,
           settingsMenu: false
         }
       });    
