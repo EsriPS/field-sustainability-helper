@@ -1,5 +1,4 @@
-export const apiKey =
-  "AAPK5818badb1d3d4f6282a26f379c538042j-w2NQ2OSEFc6DaSx2yUW4AQ-ME_BJ8cmsSWy0MRq_EvTbJTh4hR1eo5dP0o8ovE";
+export const apiKey = "REPLACEME";
 
 export const services = {
   feature: {
