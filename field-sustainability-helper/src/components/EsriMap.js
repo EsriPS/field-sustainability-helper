@@ -1,5 +1,6 @@
 import WebMap from "@arcgis/core/WebMap";
 import MapView from "@arcgis/core/views/MapView";
+import Extent from "@arcgis/core/geometry/Extent";
 
 import React, { useEffect, useState, useRef } from "react";
 
