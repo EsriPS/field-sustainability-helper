@@ -1,4 +1,5 @@
-export const apiKey = "REPLACEME";
+export const apiKey =
+  "AAPK72d095d96335411198b4950bb2e06fbb7NSJOj9dWhp2uTUhuOnJm0dD0jIXdJuWM_kKMwHbfWH88gz1w4baHMubbc6jC4Iu";
 
 export const services = {
   feature: {
@@ -15,10 +16,14 @@ export const services = {
 };
 
 export const items = {
-  webMap: "e691172598f04ea8881cd2a4adaa45ba",
+  webMap: "9a04ad6bf1af4d15b0d67b2ce757abec",
+  // The public web map owned by Gavin is 9a04ad6bf1af4d15b0d67b2ce757abec
+  // The non-public web map created by Elvis is 42888764fe474d52807db4cbfd0d4ac2
+  // (https://esriag.maps.arcgis.com/home/item.html?id=42888764fe474d52807db4cbfd0d4ac2)
+  // ... but that requires login, we we need to figure that out.
 };
 
 export const strings = {
   title: "FiSH (Field Sustainability Helper)",
-  sketchLabel: "Draw Field Boundary"
+  sketchLabel: "Draw Field Boundary",
 };

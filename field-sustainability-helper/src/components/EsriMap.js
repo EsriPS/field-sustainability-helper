@@ -20,7 +20,7 @@ function EsriMap({ webMapId, setView }) {
 
       const gLayer = new GraphicsLayer({
         id: "temp_graphics_layer",
-        title: "Sketch Layer"
+        title: "Sketch Layer",
       });
       webMap.add(gLayer);
 
@@ -28,7 +28,6 @@ function EsriMap({ webMapId, setView }) {
         map: webMap,
         container: viewDiv.current,
       });
-
 
       setView(view);
 
