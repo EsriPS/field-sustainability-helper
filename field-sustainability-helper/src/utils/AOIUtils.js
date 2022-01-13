@@ -4,6 +4,64 @@ import Query from "@arcgis/core/rest/support/Query";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
+import ImageHistogramParameters from "@arcgis/core/rest/support/ImageHistogramParameters";
+
+export async function getStatisticsHistograms(
+  url,
+  geometry,
+  view,
+  apiKey = null
+) {
+  if (
+    !geometry ||
+    (geometry?.type !== "polygon" && geometry?.type !== "extent")
+  )
+    return null;
+
+  const layer = new ImageryLayer({ url, apiKey });
+
+  const params = new ImageHistogramParameters({
+    geometry,
+    pixelSize: {
+      x: view.resolution,
+      y: view.resolution,
+      spatialReference: {
+        wkid: view.spatialReference.wkid,
+      },
+    },
+  });
+
+  return await layer.computeStatisticsHistograms(params);
+}
+
+export async function getCropsStatisticsHistograms(
+  geometry,
+  view,
+  apiKey = null
+) {
+  return getStatisticsHistograms(services.image.crops, geometry, view, apiKey);
+}
+
+export async function getElevationStatisticsHistograms(
+  geometry,
+  view,
+  apiKey = null
+) {
+  return getStatisticsHistograms(
+    services.image.elevation,
+    geometry,
+    view,
+    apiKey
+  );
+}
+
+export async function getNaipStatisticsHistograms(
+  geometry,
+  view,
+  apiKey = null
+) {
+  return getStatisticsHistograms(services.image.naip, geometry, view, apiKey);
+}
 
 export async function getSoils(geometry, apiKey = null) {
   if (
