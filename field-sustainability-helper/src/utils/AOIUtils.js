@@ -18,13 +18,38 @@ export async function getSoils(geometry, apiKey = null) {
   soilsQuery.where = "1=1";
   soilsQuery.outFields = "*";
   soilsQuery.geometry = geometry;
+  soilsQuery.returnGeometry = true;
   soilsQuery.outSpatialReference = geometry.spatialReference;
 
   const results = await soilsLayer.queryFeatures(soilsQuery);
   let soils_count = {};
+  let random_colors = {};
   for (const feature_ind in results?.features) {
     const feature = results.features[feature_ind];
+    const feature_geometry = feature.geometry;
+    const clipped_geometry = geometryEngine.intersect(
+      geometry,
+      feature_geometry
+    );
+    const mukey = feature.attributes["mukey"];
+    if (!random_colors.hasOwnProperty(mukey)) {
+      random_colors[mukey] = [
+        Math.floor(Math.random() * 255),
+        Math.floor(Math.random() * 255),
+        Math.floor(Math.random() * 255),
+        0.8,
+      ];
+    }
     const muname = feature.attributes["muname"];
+    results.features[feature_ind].geometry = clipped_geometry;
+    results.features[feature_ind].symbol = {
+      type: "simple-fill",
+      color: random_colors[mukey],
+      outline: {
+        color: "black",
+        width: "0.5px",
+      },
+    };
     if (soils_count.hasOwnProperty(muname)) soils_count[muname] += 1;
     else soils_count[muname] = 0;
   }
