@@ -44,8 +44,6 @@ function EsriSketch({ label, view, onSketchResultGraphic }) {
     <div>
       <div
         style={{
-          marginLeft: "4px",
-          marginTop: "4px",
           fontWeight: "bold",
           fontSize: "16px",
         }}
