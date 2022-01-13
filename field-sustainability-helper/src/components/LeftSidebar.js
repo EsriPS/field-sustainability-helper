@@ -1,5 +1,3 @@
-// This component is the "left hand sidebar"
-
 import EsriSketch from "./EsriSketch";
 import AnalysisResult from "./AnalysisResult";
 
@@ -8,7 +6,7 @@ import { apiKey } from "../configs/default";
 
 import React, { useEffect, useState, useRef } from "react";
 
-function InputPane({ sketchLabel, view, drawnGeometry }) {
+function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [topCrops, setTopCrops] = useState(null);
   const [health, setHealth] = useState(null);
   const [acres, setAcres] = useState(null);
@@ -62,4 +60,4 @@ function InputPane({ sketchLabel, view, drawnGeometry }) {
   );
 }
 
-export default InputPane;
+export default LeftSidebar;
