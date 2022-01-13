@@ -5,11 +5,13 @@ import { getSoils, getHealth, getAcreage } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
 import React, { useEffect, useState, useRef } from "react";
+import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [topCrops, setTopCrops] = useState(null);
   const [health, setHealth] = useState(null);
   const [acres, setAcres] = useState(null);
+  const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
 
   /**
    * onSketchResultGraphic - handle the drawn graphic
@@ -24,7 +26,17 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
    * @param {Graphic} graphic
    */
   const runAnalysis = async (graphic) => {
+    let _resultGraphicsLayer = resultGraphicsLayer;
+    if (!_resultGraphicsLayer) {
+      _resultGraphicsLayer = new GraphicsLayer();
+      view.map.add(_resultGraphicsLayer);
+      setResultGraphicsLayer(_resultGraphicsLayer);
+    }
+
+    _resultGraphicsLayer.removeAll();
+
     let soilInfo = await getSoils(graphic.geometry, apiKey);
+    _resultGraphicsLayer.addMany(soilInfo.all_results);
     setTopCrops(soilInfo.top_crops);
 
     let healthInfo = await getHealth(graphic.geometry, apiKey);
