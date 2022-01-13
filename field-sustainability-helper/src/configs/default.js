@@ -20,5 +20,5 @@ export const items = {
 
 export const strings = {
   title: "FiSH (Field Sustainability Helper)",
-  sketchLabel: "Draw Field Boundary"
+  sketchLabel: "Draw Field Boundary",
 };

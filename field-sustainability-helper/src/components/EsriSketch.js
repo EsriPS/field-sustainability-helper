@@ -10,8 +10,9 @@ function EsriSketch({ label, view }) {
 
   useEffect(() => {
     if (view) {
-
-      const gLayer = view.map.layers.items.filter(x => x.id === 'temp_graphics_layer')[0];
+      const gLayer = view.map.layers.items.filter(
+        (x) => x.id === "temp_graphics_layer"
+      )[0];
 
       const sketchWidget = new Sketch({
         view: view,
@@ -20,47 +21,55 @@ function EsriSketch({ label, view }) {
         visibleElements: {
           createTools: {
             point: false,
-            polyline: false
+            polyline: false,
           },
           selectionTools: {
             "lasso-selection": false,
-            "rectangle-selection": false
+            "rectangle-selection": false,
           },
           undoRedoMenu: false,
-          settingsMenu: false
-        }
+          settingsMenu: false,
+        },
       });
-      
+
       // Listen to sketch widget's create event.
-      sketchWidget.on("create", function(evt) {
+      sketchWidget.on("create", function (evt) {
         // check if the create event's state has changed to complete indicating
         // the graphic create operation is completed.
         if (evt.state === "complete") {
-
           let soilInfo = getSoils(evt.graphic.geometry, apiKey);
-          soilInfo.then(function(res) {
-            console.log('top crops: ', res['top_crops']);
+          soilInfo.then(function (res) {
+            console.log("top crops: ", res["top_crops"]);
           });
 
           let health = getHealth(evt.graphic.geometry, apiKey);
-          health.then(function(res) {
-            console.log('health: ', res);
+          health.then(function (res) {
+            console.log("health: ", res);
           });
 
           let acreage = getAcreage(evt.graphic.geometry, apiKey);
-          console.log('acreage: ', acreage);
+          console.log("acreage: ", acreage);
         }
-});
+      });
     }
   }, [view]);
 
-
   return (
     <div>
-      <div style={{ marginLeft: "4px", marginTop: "4px", fontWeight: "bold", fontSize: "16px" }}>
+      <div
+        style={{
+          marginLeft: "4px",
+          marginTop: "4px",
+          fontWeight: "bold",
+          fontSize: "16px",
+        }}
+      >
         {label}
       </div>
-      <div style={{ marginLeft: "4px", marginTop: "10px"}} ref={sketchRef}></div>
+      <div
+        style={{ marginLeft: "4px", marginTop: "10px" }}
+        ref={sketchRef}
+      ></div>
     </div>
   );
 }

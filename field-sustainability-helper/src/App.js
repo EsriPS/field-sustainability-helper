@@ -7,10 +7,8 @@ import InputPane from "./components/InputPane";
 
 import React, { useEffect, useState, useRef } from "react";
 
-
 function App() {
   const [view, setView] = useState(null);
-
 
   function setMapView(mapView) {
     setView(mapView);
