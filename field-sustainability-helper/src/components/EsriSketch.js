@@ -1,6 +1,6 @@
 import Sketch from "@arcgis/core/widgets/Sketch";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 function EsriSketch({ label, view, onSketchResultGraphic }) {
   const sketchRef = useRef(null);
@@ -20,6 +20,7 @@ function EsriSketch({ label, view, onSketchResultGraphic }) {
         view: view,
         layer: gLayer,
         container: domNode,
+        creationMode: "single",
         visibleElements: {
           createTools: {
             point: false,
@@ -35,23 +36,36 @@ function EsriSketch({ label, view, onSketchResultGraphic }) {
       });
 
       // Listen to sketch widget's create event.
-      const watchHandle = sketchWidget.on("create", function (evt) {
+      const createWatchHandle = sketchWidget.on("create", function (evt) {
         // check if the create event's state has changed to complete indicating
         // the graphic create operation is completed.
         if (evt.state === "complete") {
           onSketchResultGraphic(evt.graphic);
         }
+
+        // When the drawing is starting, remove any previously drawn graphics
+        if (evt.state === "start") {
+          gLayer.removeAll();
+        }
+      });
+
+      // Listen to sketch widget's update event.
+      const updateWatchHandle = sketchWidget.on("update", (evt) => {
+        if (evt.state === "complete") {
+          onSketchResultGraphic(evt.graphics[0]);
+        }
       });
 
       return () => {
         // Cleanup the widget and any event handles
-        if (sketchWidget && watchHandle) {
-          watchHandle.remove();
+        if (sketchWidget && createWatchHandle && updateWatchHandle) {
+          createWatchHandle.remove();
+          updateWatchHandle.remove();
           sketchWidget.destroy();
         }
       };
     }
-  }, [view]);
+  }, [view, onSketchResultGraphic]);
 
   return (
     <div>
