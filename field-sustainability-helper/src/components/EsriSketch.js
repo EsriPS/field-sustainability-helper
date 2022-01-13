@@ -1,11 +1,8 @@
-import { getSoils, getHealth, getAcreage } from "../utils/AOIUtils";
-import { apiKey } from "../configs/default";
-
 import Sketch from "@arcgis/core/widgets/Sketch";
 
 import React, { useEffect, useState, useRef } from "react";
 
-function EsriSketch({ label, view }) {
+function EsriSketch({ label, view, onSketchResultGraphic }) {
   const sketchRef = useRef(null);
 
   useEffect(() => {
@@ -37,18 +34,7 @@ function EsriSketch({ label, view }) {
         // check if the create event's state has changed to complete indicating
         // the graphic create operation is completed.
         if (evt.state === "complete") {
-          let soilInfo = getSoils(evt.graphic.geometry, apiKey);
-          soilInfo.then(function (res) {
-            console.log("top crops: ", res["top_crops"]);
-          });
-
-          let health = getHealth(evt.graphic.geometry, apiKey);
-          health.then(function (res) {
-            console.log("health: ", res);
-          });
-
-          let acreage = getAcreage(evt.graphic.geometry, apiKey);
-          console.log("acreage: ", acreage);
+          onSketchResultGraphic(evt.graphic);
         }
       });
     }
