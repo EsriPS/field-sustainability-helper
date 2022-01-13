@@ -26,4 +26,12 @@ export const items = {
 export const strings = {
   title: "FiSH (Field Sustainability Helper)",
   sketchLabel: "Draw Field Boundary",
+  acres: "Acres",
+  soilType: "Soil Type",
+  soilHealth: "Soil Health",
+  crop21: "2021 Crop",
+  slope: "Slope",
+  health21: "2021 Health",
+  erosionClass: "Erosion Class",
+  health5Year: "5 Year Health"
 };
