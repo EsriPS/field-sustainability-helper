@@ -27,11 +27,13 @@ function InputPane({ sketchLabel, view, drawnGeometry }) {
    */
   const runAnalysis = async (graphic) => {
     let soilInfo = await getSoils(graphic.geometry, apiKey);
-    console.log("soilInfo", soilInfo);
-    // setTopCrops(soilInfo.top_crops);
+    setTopCrops(soilInfo.top_crops);
 
-    // TODO: do same as above for getHealth (setHealth)
-    // TODO: do same as above for getAcreage (setAcres)
+    let healthInfo = await getHealth(graphic.geometry, apiKey);
+    setHealth(healthInfo);
+
+    const totalAcres = await getAcreage(graphic.geometry, apiKey);
+    setAcres(totalAcres);
   };
 
   return (

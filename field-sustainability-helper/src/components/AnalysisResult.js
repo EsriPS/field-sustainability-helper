@@ -2,11 +2,28 @@
 
 function AnalysisResult({ topCrops, health, acres }) {
   return (
-    <div>
-      <p>{topCrops}</p>
-      <p>{health}</p>
-      <p>{acres}</p>
-    </div>
+    topCrops &&
+    health &&
+    acres && (
+      <div>
+        <p>
+          <strong>Top crops:</strong>
+        </p>
+        <ul>
+          {topCrops &&
+            topCrops.length > 0 &&
+            topCrops.map((cropName, index) => {
+              return <li key={index}>{cropName}</li>;
+            })}
+        </ul>
+        <p>
+          <strong>Soil health:</strong> {health}
+        </p>
+        <p>
+          <strong>Area:</strong> {acres} acres
+        </p>
+      </div>
+    )
   );
 }
 
