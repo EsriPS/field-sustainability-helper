@@ -24,7 +24,7 @@ function App() {
         title={strings.title}
       ></Header>
       <section className="container">
-        <InputPane label="Draw Field Boundary" view={view}></InputPane>
+        <InputPane sketchLabel={strings.sketchLabel} view={view}></InputPane>
         <EsriMap webMapId={items.webMap} setView={setMapView}></EsriMap>
       </section>
     </div>
