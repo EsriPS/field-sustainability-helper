@@ -1,4 +1,4 @@
-import { services, strings } from "../configs/default";
+import { services, strings, apiKey } from "../configs/default";
 
 import WebMap from "@arcgis/core/WebMap";
 import MapView from "@arcgis/core/views/MapView";
@@ -6,8 +6,10 @@ import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
 import Basemap from "@arcgis/core/Basemap";
 import BasemapGallery from "@arcgis/core/widgets/BasemapGallery";
+import Search from "@arcgis/core/widgets/Search";
+import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
+import Expand from "@arcgis/core/widgets/Expand";
 import esriConfig from "@arcgis/core/config";
-import { apiKey } from "../configs/default";
 
 import React, { useEffect, useRef } from "react";
 
@@ -36,6 +38,22 @@ function EsriMap({ webMapId, setView }) {
       });
 
       setView(view);
+
+      const searchWidget = new Search({
+        view: view
+      });
+
+      const basemapSwitcher = new BasemapToggle({
+        view: view,
+        nextBasemap: "arcgis-streets"
+      });
+
+      const basemapSwitcherExpand = new Expand({
+        expandIconClass: "esri-icon-basemap",
+        view: view,
+        content: basemapSwitcher,
+        group: "top-right"
+      });
 
       const soilBasemap = new Basemap({
         baseLayers: [
@@ -67,16 +85,24 @@ function EsriMap({ webMapId, setView }) {
         // thumbnailUrl: ???
       });
 
-      const defaultBasemap = Basemap.fromId("arcgis-imagery-standard");
-
       const basemapGalleryWidget = new BasemapGallery({
         view: view,
-        source: [defaultBasemap, soilBasemap, naipBasemap, cropBasemap],
+        source: [soilBasemap, naipBasemap, cropBasemap],
       });
 
-      view.ui.add(basemapGalleryWidget, {
-        position: "top-right",
+      const basemapGalleryExpand = new Expand({
+        expandIconClass: "esri-icon-layers",
+        view: view,
+        content: basemapGalleryWidget,
+        group: "top-right"
+      })
+
+      view.ui.add(searchWidget, {
+        position: "top-right"
       });
+
+      view.ui.add([basemapSwitcherExpand, basemapGalleryExpand], "top-right");
+
     }
   }, [webMapId]);
 
