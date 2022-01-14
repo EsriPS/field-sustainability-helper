@@ -31,7 +31,7 @@ export const strings = {
   acres: "Acres",
   soilType: "Soil Type",
   soilHealth: "Soil Health",
-  crop21: "2021 Crop",
+  crop21: "2021 Soil",
   slope: "Slope",
   health21: "2021 Health",
   erosionClass: "Erosion Class",

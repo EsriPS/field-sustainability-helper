@@ -1,6 +1,6 @@
 import { strings } from "../configs/default";
 
-function AnalysisResult({ topCrops, health, acres, slope }) {
+function AnalysisResult({ topSoils, health, acres, slope }) {
   const cardStyle = {
     border: "1px solid gray",
     textAlign: "center",
@@ -8,7 +8,7 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
   };
 
   const largerFontSize = {
-    fontSize: "26px"
+    fontSize: "26px",
   };
 
   let healthDot = {
@@ -30,7 +30,7 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
   }
 
   return (
-    topCrops &&
+    topSoils &&
     health &&
     acres && (
       <div>
@@ -43,16 +43,18 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
           }}
         >
           <div style={cardStyle}>
-            <div style={largerFontSize}>
-            {acres.toFixed(1)}
-            </div>
+            <div style={largerFontSize}>{acres.toFixed(1)}</div>
             <h5>{strings.acres}</h5>
           </div>
           <div style={cardStyle}>
-            {topCrops &&
-              topCrops.length > 0 &&
-              topCrops.map((cropName, index) => {
-                return <p key={index} style={{fontSize: "small"}}>{cropName}</p>;
+            {topSoils &&
+              topSoils.length > 0 &&
+              topSoils.map((soilName, index) => {
+                return (
+                  <p key={index} style={{ fontSize: "small" }}>
+                    {soilName}
+                  </p>
+                );
               })}
             <h5>{strings.soilType}</h5>
           </div>
@@ -61,24 +63,18 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
             <h5>{strings.soilHealth}</h5>
           </div>
           <div style={cardStyle}>
-          <div style={largerFontSize}>
-            Hardcoded Corn
-          </div>
+            <div style={largerFontSize}>Hardcoded Corn</div>
             <h5>{strings.crop21}</h5>
           </div>
           <div style={cardStyle}>
-          <div style={largerFontSize}>
-            {slope.toFixed(1)}
-            </div>
+            <div style={largerFontSize}>{slope.toFixed(1)}</div>
             <h5>{strings.slope}</h5>
           </div>
           <div style={cardStyle}>
             <h5>{strings.health21}</h5>
           </div>
           <div style={cardStyle}>
-            <div style={largerFontSize}>
-
-            </div>
+            <div style={largerFontSize}></div>
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>

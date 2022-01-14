@@ -6,13 +6,17 @@ import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import ImageHistogramParameters from "@arcgis/core/rest/support/ImageHistogramParameters";
 import RasterFunction from "@arcgis/core/layers/support/RasterFunction";
+import MosaicRule from "@arcgis/core/layers/support/MosaicRule";
+import TimeExtent from "@arcgis/core/TimeExtent";
 
 export async function getStatisticsHistograms(
   url,
   geometry,
   view,
   apiKey = null,
-  rasterFunction = null
+  renderingRule = null,
+  mosaicRule = null,
+  timeExtent = null
 ) {
   if (
     !geometry ||
@@ -31,10 +35,20 @@ export async function getStatisticsHistograms(
         wkid: view.spatialReference.wkid,
       },
     },
-    renderingRule: rasterFunction,
+    renderingRule,
+    mosaicRule,
+    timeExtent,
   });
 
-  return await layer.computeStatisticsHistograms(params);
+  const statisticsHistograms = await layer.computeStatisticsHistograms(params);
+  let attributeMapping = [];
+  if (renderingRule) {
+    const rasterInfo = await layer.generateRasterInfo(renderingRule);
+    if (rasterInfo.attributeTable)
+      attributeMapping = rasterInfo.attributeTable.features;
+  }
+
+  return { statisticsHistograms, attributeMapping };
 }
 
 export async function getAvgErosion(geometry, view, apiKey = null) {
@@ -45,8 +59,10 @@ export async function getAvgErosion(geometry, view, apiKey = null) {
     apiKey
   );
 
-  if (results.statistics.length > 0) {
-    return results.statistics[0].avg;
+  const statisticsHistograms = results.statisticsHistograms;
+
+  if (statisticsHistograms.statistics.length > 0) {
+    return statisticsHistograms.statistics[0].avg;
   }
 
   return 0;
@@ -64,8 +80,10 @@ export async function getAvgSlope(geometry, view, apiKey = null) {
     slopeRF
   );
 
-  if (results.statistics.length > 0) {
-    return results.statistics[0].avg;
+  const statisticsHistograms = results.statisticsHistograms;
+
+  if (statisticsHistograms.statistics.length > 0) {
+    return statisticsHistograms.statistics[0].avg;
   }
 
   return 0;
@@ -88,18 +106,15 @@ export async function getSoils(geometry, apiKey = null) {
   soilsQuery.outSpatialReference = geometry.spatialReference;
 
   const results = await soilsLayer.queryFeatures(soilsQuery);
-  let soils_count = {};
-  let random_colors = {};
-  for (const feature_ind in results?.features) {
-    const feature = results.features[feature_ind];
-    const feature_geometry = feature.geometry;
-    const clipped_geometry = geometryEngine.intersect(
-      geometry,
-      feature_geometry
-    );
+  let soilsCount = {};
+  let randomColors = {};
+  for (const featureInd in results?.features) {
+    const feature = results.features[featureInd];
+    const featureGeometry = feature.geometry;
+    const clippedGeometry = geometryEngine.intersect(geometry, featureGeometry);
     const mukey = feature.attributes["mukey"];
-    if (!random_colors.hasOwnProperty(mukey)) {
-      random_colors[mukey] = [
+    if (!randomColors.hasOwnProperty(mukey)) {
+      randomColors[mukey] = [
         Math.floor(Math.random() * 255),
         Math.floor(Math.random() * 255),
         Math.floor(Math.random() * 255),
@@ -107,26 +122,62 @@ export async function getSoils(geometry, apiKey = null) {
       ];
     }
     const muname = feature.attributes["muname"];
-    results.features[feature_ind].geometry = clipped_geometry;
-    results.features[feature_ind].symbol = {
+    results.features[featureInd].geometry = clippedGeometry;
+    results.features[featureInd].symbol = {
       type: "simple-fill",
-      color: random_colors[mukey],
+      color: randomColors[mukey],
       outline: {
         color: "black",
         width: "0.5px",
       },
     };
-    if (soils_count.hasOwnProperty(muname)) soils_count[muname] += 1;
-    else soils_count[muname] = 0;
+    if (soilsCount.hasOwnProperty(muname)) soilsCount[muname] += 1;
+    else soilsCount[muname] = 0;
   }
 
-  const soils_count_sorted = Object.keys(soils_count).sort((a, b) => {
-    return soils_count[b] - soils_count[a];
+  const soilsCountSorted = Object.keys(soilsCount).sort((a, b) => {
+    return soilsCount[b] - soilsCount[a];
   });
 
   return {
-    top_crops: soils_count_sorted.slice(0, 3),
-    all_results: results?.features,
+    topSoils: soilsCountSorted.slice(0, 3),
+    allResults: results?.features,
+  };
+}
+
+export async function getCrops(geometry, view, year = 2020, apiKey = null) {
+  const cropsRF = new RasterFunction();
+  cropsRF.functionName = "croptypes";
+
+  const cropsMR = new MosaicRule();
+  cropsMR.where = `Year = ${year}`;
+
+  const results = await getStatisticsHistograms(
+    services.image.crops,
+    geometry,
+    view,
+    apiKey,
+    cropsRF,
+    cropsMR
+  );
+
+  const statisticsHistograms = results.statisticsHistograms;
+  const attributeMapping = results.attributeMapping;
+  let cropCount = {};
+
+  if (statisticsHistograms.histograms.length > 0) {
+    attributeMapping.forEach((am, index) => {
+      const count = statisticsHistograms.histograms[0].counts[index];
+      if (count > 0) cropCount[am.attributes["Class_Name"]] = count;
+    });
+  }
+
+  const cropCountSorted = Object.keys(cropCount).sort((a, b) => {
+    return cropCount[b] - cropCount[a];
+  });
+
+  return {
+    topCrops: cropCountSorted.slice(0, 3),
   };
 }
 
@@ -141,12 +192,12 @@ export async function getHealth(geometry, view, apiKey = null) {
 
   const avgErosion = await getAvgErosion(geometry, view, apiKey);
   const erosionScore = 100 * (1 - avgErosion / 4);
-  const health_ind = Math.min(
+  const healthInd = Math.min(
     Math.floor(erosionScore * (4 / 100)),
     HEALTH_STRINGS.length - 1
   );
 
-  return HEALTH_STRINGS[health_ind];
+  return HEALTH_STRINGS[healthInd];
 }
 
 export function getAcreage(geometry) {
