@@ -10,6 +10,11 @@ import {
   getErosionClass,
   getCrops,
   getAvgNdvi,
+  clipAndGetCrops,
+  clipAndGetNdvi,
+  clipAndGetSsurgo,
+  clipAndGetElevation,
+  clipAndGetErosion,
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
@@ -25,6 +30,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [erosionClass, setErosionClass] = useState(null);
   const [currentHealth, setCurrentHealth] = useState(null);
   const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
+  const [croppedImageLayers, setCroppedImageLayers] = useState({});
   const [busy, setBusy] = useState(false);
 
   /**
@@ -48,6 +54,25 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
       view.map.add(_resultGraphicsLayer);
       setResultGraphicsLayer(_resultGraphicsLayer);
     }
+
+    const newImageLayers = [
+      clipAndGetCrops(graphic.geometry, apiKey),
+      clipAndGetElevation(graphic.geometry, apiKey),
+      clipAndGetErosion(graphic.geometry, apiKey),
+      clipAndGetNdvi(graphic.geometry, apiKey),
+      clipAndGetSsurgo(graphic.geometry, apiKey),
+    ];
+    let newCroppedImageLayers = {};
+    for (const ind in newImageLayers) {
+      const newImageLayer = newImageLayers[ind];
+      const title = newImageLayer.title;
+      if (croppedImageLayers.hasOwnProperty(title))
+        view.map.remove(croppedImageLayers[title]);
+
+      newCroppedImageLayers[title] = newImageLayer;
+      view.map.add(newImageLayer);
+    }
+    setCroppedImageLayers(newCroppedImageLayers);
 
     _resultGraphicsLayer.removeAll();
 
