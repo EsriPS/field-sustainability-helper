@@ -93,7 +93,9 @@ function AnalysisResult({
             <h5>{strings.health19}</h5>
           </div>
           <div style={cardStyle}>
-            <div style={largerFontSize}>{erosionClass}</div>
+            <div style={largerFontSize}>
+              {erosionClass.replaceAll("In this map unit, ", "")}
+            </div>
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>
