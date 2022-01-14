@@ -14,6 +14,8 @@ export const services = {
       "https://pdiimagery.azurecloudgov.us/arcgis/rest/services/CDL_WM/ImageServer",
     erosion:
       "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Erosion_Class/ImageServer",
+    ssurgo:
+      "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Hydrologic_Group/ImageServer"
   },
 };
 
@@ -36,4 +38,7 @@ export const strings = {
   health21: "2021 Health",
   erosionClass: "Erosion Class",
   health5Year: "5 Year Health",
+  soilsLayer: "SSURGO Soil",
+  naipLayer: "USA NAIP",
+  croplandLayer: "USDA Cropland"
 };
