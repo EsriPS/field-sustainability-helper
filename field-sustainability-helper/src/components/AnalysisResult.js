@@ -1,6 +1,6 @@
 import { strings } from "../configs/default";
 
-function AnalysisResult({ topSoils, health, acres, slope }) {
+function AnalysisResult({ topSoils, health, acres, slope, topCrops }) {
   const cardStyle = {
     border: "1px solid gray",
     textAlign: "center",
@@ -8,7 +8,7 @@ function AnalysisResult({ topSoils, health, acres, slope }) {
   };
 
   const largerFontSize = {
-    fontSize: "26px",
+    fontSize: "25px",
   };
 
   let healthDot = {
@@ -32,7 +32,9 @@ function AnalysisResult({ topSoils, health, acres, slope }) {
   return (
     topSoils &&
     health &&
-    acres && (
+    acres &&
+    slope &&
+    topCrops && (
       <div>
         <div
           style={{
@@ -63,8 +65,16 @@ function AnalysisResult({ topSoils, health, acres, slope }) {
             <h5>{strings.soilHealth}</h5>
           </div>
           <div style={cardStyle}>
-            <div style={largerFontSize}>Hardcoded Corn</div>
-            <h5>{strings.crop21}</h5>
+          {topCrops &&
+              topCrops.length > 0 &&
+              topCrops.map((cropName, index) => {
+                return (
+                  <p key={index} style={largerFontSize}>
+                    {cropName}
+                  </p>
+                );
+              })}
+            <h5>{strings.crops20}</h5>
           </div>
           <div style={cardStyle}>
             <div style={largerFontSize}>{slope.toFixed(1)}</div>

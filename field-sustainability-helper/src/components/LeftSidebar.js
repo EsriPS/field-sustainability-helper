@@ -20,6 +20,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [health, setHealth] = useState(null);
   const [acres, setAcres] = useState(null);
   const [slope, setSlope] = useState(null);
+  const [topCrops, setTopCrops] = useState(null);
   const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -57,16 +58,14 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     const totalAcres = await getAcreage(graphic.geometry, apiKey);
     setAcres(totalAcres);
 
-    // slope
     const avgSlope = await getAvgSlope(graphic.geometry, view, apiKey);
     setSlope(avgSlope);
 
-    // erosion class
     const avgErosion = await getAvgErosion(graphic.geometry, view, apiKey);
     console.log("TODO: use avgErosion:", avgErosion);
 
     const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
-    console.log(crops);
+    setTopCrops(crops.topCrops);
 
     setBusy(false);
   };
@@ -88,6 +87,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
             health={health}
             acres={acres}
             slope={slope}
+            topCrops={topCrops}
           ></AnalysisResult>
         </>
       );
