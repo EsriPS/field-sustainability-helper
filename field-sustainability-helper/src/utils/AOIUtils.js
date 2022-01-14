@@ -245,6 +245,7 @@ export function clipAndGetImageryLayer(url, geometry, apiKey = null) {
       ClippingType: 1,
     },
   });
+  layer.visible = false;
 
   return layer;
 }
