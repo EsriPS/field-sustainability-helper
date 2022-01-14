@@ -1,3 +1,4 @@
+import React, { useRef, useEffect } from "react";
 import { strings } from "../configs/default";
 
 function AnalysisResult({
@@ -8,7 +9,32 @@ function AnalysisResult({
   topCrops,
   erosionClass,
   currentHealth,
+  health5YearData,
 }) {
+  const health5YearCanvas = useRef(null);
+
+  useEffect(() => {
+    if (health5YearData && health5YearCanvas.current) {
+      // TODO: Maybe revive this when we have time
+      // console.log(health5YearData);
+      // const width = health5YearData.params.width;
+      // const height = health5YearData.params.height;
+      // const ctx = health5YearCanvas.current.getContext("2d");
+      // const imageData = ctx.createImageData(width, height);
+      // console.log(imageData);
+      // for (let i = 0; i <= imageData.data.length; i += 3) {
+      //   imageData.data[i + 0] =
+      //     health5YearData.pixelData.pixelBlock.pixels[0][i];
+      //   imageData.data[i + 1] =
+      //     health5YearData.pixelData.pixelBlock.pixels[1][i];
+      //   imageData.data[i + 2] =
+      //     health5YearData.pixelData.pixelBlock.pixels[2][i];
+      // }
+      // imageData.data = health5YearData.pixelData;
+      // ctx.putImageData(imageData, width * 2, height * 2);
+    }
+  }, [health5YearData]);
+
   const cardStyle = {
     border: "1px solid gray",
     textAlign: "center",
@@ -99,6 +125,7 @@ function AnalysisResult({
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>
+            <canvas ref={health5YearCanvas}></canvas>
             <h5>{strings.health5Year}</h5>
           </div>
         </div>

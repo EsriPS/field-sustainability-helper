@@ -319,11 +319,15 @@ export async function fetchYearImages(
   ndviRF.functionName = "NaturalColor";
 
   let images = [];
-  for (let year = startYear; (year += 1); year <= endYear) {
+  for (let year = startYear; year <= endYear; year++) {
     const ndviMR = new MosaicRule();
     ndviMR.where = `Year = ${year}`;
-
-    images.push(layer.fetchImage(geometry, ratio * 200, 200));
+    layer.mosaicRule = ndviMR;
+    images.push(
+      await layer.fetchImage(geometry, Math.floor(ratio * 30), 30, {
+        f: "json",
+      })
+    );
   }
 
   return images;
