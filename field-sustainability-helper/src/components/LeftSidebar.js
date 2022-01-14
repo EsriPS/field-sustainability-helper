@@ -50,7 +50,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     let _resultGraphicsLayer = resultGraphicsLayer;
     if (!_resultGraphicsLayer) {
-      _resultGraphicsLayer = new GraphicsLayer();
+      _resultGraphicsLayer = new GraphicsLayer({ title: "Soils" });
       view.map.add(_resultGraphicsLayer);
       setResultGraphicsLayer(_resultGraphicsLayer);
     }
