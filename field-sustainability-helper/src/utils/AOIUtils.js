@@ -211,26 +211,46 @@ export async function getAvgNdvi(geometry, view, year = 2020, apiKey = null) {
 }
 
 export function clipAndGetCrops(geometry, apiKey = null) {
-  return clipAndGetImageryLayer(services.image.crops, geometry, apiKey);
+  return clipAndGetImageryLayer(
+    services.image.crops,
+    geometry,
+    new RasterFunction({ functionName: "croptypes" }),
+    apiKey
+  );
 }
 
 export function clipAndGetElevation(geometry, apiKey = null) {
-  return clipAndGetImageryLayer(services.image.elevation, geometry, apiKey);
+  return clipAndGetImageryLayer(
+    services.image.elevation,
+    geometry,
+    new RasterFunction({ functionName: "Grayscale_Hillshade" }),
+    apiKey
+  );
 }
 
 export function clipAndGetErosion(geometry, apiKey = null) {
-  return clipAndGetImageryLayer(services.image.erosion, geometry, apiKey);
+  return clipAndGetImageryLayer(services.image.erosion, geometry, null, apiKey);
 }
 
 export function clipAndGetNdvi(geometry, apiKey = null) {
-  return clipAndGetImageryLayer(services.image.naip, geometry, apiKey);
+  return clipAndGetImageryLayer(
+    services.image.naip,
+    geometry,
+    new RasterFunction({ functionName: "NaturalColor" }),
+    apiKey
+  );
 }
 
 export function clipAndGetSsurgo(geometry, apiKey = null) {
-  return clipAndGetImageryLayer(services.image.ssurgo, geometry, apiKey);
+  return clipAndGetImageryLayer(services.image.ssurgo, geometry, null, apiKey);
 }
 
-export function clipAndGetImageryLayer(url, geometry, apiKey = null) {
+export function clipAndGetImageryLayer(
+  url,
+  geometry,
+  defaultRenderingRule = null,
+  apiKey = null
+) {
   if (
     !geometry ||
     (geometry?.type !== "polygon" && geometry?.type !== "extent")
@@ -243,6 +263,7 @@ export function clipAndGetImageryLayer(url, geometry, apiKey = null) {
     functionArguments: {
       ClippingGeometry: geometry,
       ClippingType: 1,
+      Raster: defaultRenderingRule,
     },
   });
   layer.visible = false;
@@ -274,4 +295,51 @@ export function getAcreage(geometry) {
   if (!geometry || geometry?.type !== "polygon") return null;
 
   return geometryEngine.geodesicArea(geometry, "acres");
+}
+
+export async function fetchYearImages(
+  url,
+  startYear,
+  endYear,
+  geometry,
+  apiKey = null
+) {
+  if (
+    !geometry ||
+    (geometry?.type !== "polygon" && geometry?.type !== "extent")
+  )
+    return null;
+
+  if (geometry?.type === "polygon") geometry = geometry.extent;
+  const ratio = geometry.width / geometry.height;
+
+  const layer = new ImageryLayer({ url, apiKey });
+
+  const ndviRF = new RasterFunction();
+  ndviRF.functionName = "NaturalColor";
+
+  let images = [];
+  for (let year = startYear; (year += 1); year <= endYear) {
+    const ndviMR = new MosaicRule();
+    ndviMR.where = `Year = ${year}`;
+
+    images.push(layer.fetchImage(geometry, ratio * 200, 200));
+  }
+
+  return images;
+}
+
+export async function fetchNdviYearImages(
+  startYear,
+  endYear,
+  geometry,
+  apiKey = null
+) {
+  return await fetchYearImages(
+    services.image.naip,
+    startYear,
+    endYear,
+    geometry,
+    apiKey
+  );
 }
