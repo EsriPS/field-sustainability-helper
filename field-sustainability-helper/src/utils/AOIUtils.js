@@ -42,11 +42,10 @@ export async function getStatisticsHistograms(
 
   const statisticsHistograms = await layer.computeStatisticsHistograms(params);
   let attributeMapping = [];
-  if (renderingRule) {
-    const rasterInfo = await layer.generateRasterInfo(renderingRule);
-    if (rasterInfo.attributeTable)
-      attributeMapping = rasterInfo.attributeTable.features;
-  }
+  if (!renderingRule) renderingRule = layer.renderingRule;
+  const rasterInfo = await layer.generateRasterInfo(renderingRule);
+  if (rasterInfo.attributeTable)
+    attributeMapping = rasterInfo.attributeTable.features;
 
   return { statisticsHistograms, attributeMapping };
 }
@@ -60,9 +59,14 @@ export async function getErosionClass(geometry, view, apiKey = null) {
   );
 
   const statisticsHistograms = results.statisticsHistograms;
+  const attributeMapping = results.attributeMapping;
 
   if (statisticsHistograms.statistics.length > 0) {
-    return statisticsHistograms.statistics[0].mode;
+    const mode = statisticsHistograms.statistics[0].mode;
+    return {
+      class: mode,
+      description: attributeMapping[mode].attributes.description,
+    };
   }
 
   return 0;
@@ -190,8 +194,9 @@ export async function getHealth(geometry, view, apiKey = null) {
   )
     return null;
 
-  const avgErosion = await getErosionClass(geometry, view, apiKey);
-  const erosionScore = 100 * (1 - avgErosion / 4);
+  const erosionInfo = await getErosionClass(geometry, view, apiKey);
+  const erosionClass = erosionInfo.class;
+  const erosionScore = 100 * (1 - erosionClass / 4);
   const healthInd = Math.min(
     Math.floor(erosionScore * (4 / 100)),
     HEALTH_STRINGS.length - 1

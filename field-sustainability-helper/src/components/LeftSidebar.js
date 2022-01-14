@@ -62,7 +62,8 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     const avgSlope = await getAvgSlope(graphic.geometry, view, apiKey);
     setSlope(avgSlope);
 
-    const erosionClass = await getErosionClass(graphic.geometry, view, apiKey);
+    const erosionInfo = await getErosionClass(graphic.geometry, view, apiKey);
+    const erosionClass = erosionInfo.description;
     setErosionClass(erosionClass);
 
     const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
