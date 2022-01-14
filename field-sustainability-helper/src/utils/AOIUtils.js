@@ -51,7 +51,7 @@ export async function getStatisticsHistograms(
   return { statisticsHistograms, attributeMapping };
 }
 
-export async function getAvgErosion(geometry, view, apiKey = null) {
+export async function getErosionClass(geometry, view, apiKey = null) {
   const results = await getStatisticsHistograms(
     services.image.erosion,
     geometry,
@@ -62,7 +62,7 @@ export async function getAvgErosion(geometry, view, apiKey = null) {
   const statisticsHistograms = results.statisticsHistograms;
 
   if (statisticsHistograms.statistics.length > 0) {
-    return statisticsHistograms.statistics[0].avg;
+    return statisticsHistograms.statistics[0].mode;
   }
 
   return 0;
@@ -190,7 +190,7 @@ export async function getHealth(geometry, view, apiKey = null) {
   )
     return null;
 
-  const avgErosion = await getAvgErosion(geometry, view, apiKey);
+  const avgErosion = await getErosionClass(geometry, view, apiKey);
   const erosionScore = 100 * (1 - avgErosion / 4);
   const healthInd = Math.min(
     Math.floor(erosionScore * (4 / 100)),

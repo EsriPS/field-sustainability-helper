@@ -1,6 +1,13 @@
 import { strings } from "../configs/default";
 
-function AnalysisResult({ topSoils, health, acres, slope, topCrops }) {
+function AnalysisResult({
+  topSoils,
+  health,
+  acres,
+  slope,
+  topCrops,
+  erosionClass,
+}) {
   const cardStyle = {
     border: "1px solid gray",
     textAlign: "center",
@@ -65,7 +72,7 @@ function AnalysisResult({ topSoils, health, acres, slope, topCrops }) {
             <h5>{strings.soilHealth}</h5>
           </div>
           <div style={cardStyle}>
-          {topCrops &&
+            {topCrops &&
               topCrops.length > 0 &&
               topCrops.map((cropName, index) => {
                 return (
@@ -84,7 +91,7 @@ function AnalysisResult({ topSoils, health, acres, slope, topCrops }) {
             <h5>{strings.health21}</h5>
           </div>
           <div style={cardStyle}>
-            <div style={largerFontSize}></div>
+            <div style={largerFontSize}>{erosionClass}</div>
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>
