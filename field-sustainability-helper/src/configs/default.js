@@ -15,7 +15,7 @@ export const services = {
     erosion:
       "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Erosion_Class/ImageServer",
     ssurgo:
-      "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Hydrologic_Group/ImageServer"
+      "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Hydrologic_Group/ImageServer",
   },
 };
 
@@ -35,10 +35,10 @@ export const strings = {
   soilHealth: "Soil Health",
   crops20: "2020 Crops",
   slope: "Slope",
-  health21: "2021 Health",
+  health19: "2019 Health",
   erosionClass: "Erosion Class",
   health5Year: "5 Year Health",
   soilsLayer: "SSURGO Soil",
   naipLayer: "USA NAIP",
-  croplandLayer: "USDA Cropland"
+  croplandLayer: "USDA Cropland",
 };

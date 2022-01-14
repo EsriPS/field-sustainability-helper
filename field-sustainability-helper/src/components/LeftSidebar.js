@@ -4,11 +4,12 @@ import catLoading from "../images/cat-loading.gif";
 
 import {
   getSoils,
-  getHealth,
+  getSoilHealth,
   getAcreage,
   getAvgSlope,
   getErosionClass,
   getCrops,
+  getAvgNdvi,
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
@@ -17,11 +18,12 @@ import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [topSoils, setTopSoils] = useState(null);
-  const [health, setHealth] = useState(null);
+  const [soilHealth, setSoilHealth] = useState(null);
   const [acres, setAcres] = useState(null);
   const [slope, setSlope] = useState(null);
   const [topCrops, setTopCrops] = useState(null);
   const [erosionClass, setErosionClass] = useState(null);
+  const [currentHealth, setCurrentHealth] = useState(null);
   const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -53,8 +55,8 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     _resultGraphicsLayer.addMany(soilInfo.allResults);
     setTopSoils(soilInfo.topSoils);
 
-    const healthInfo = await getHealth(graphic.geometry, view, apiKey);
-    setHealth(healthInfo);
+    const healthInfo = await getSoilHealth(graphic.geometry, view, apiKey);
+    setSoilHealth(healthInfo);
 
     const totalAcres = await getAcreage(graphic.geometry, apiKey);
     setAcres(totalAcres);
@@ -68,6 +70,9 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
     setTopCrops(crops.topCrops);
+
+    const avgNdvi = await getAvgNdvi(graphic.geometry, view, 2019, apiKey);
+    setCurrentHealth(avgNdvi);
 
     setBusy(false);
   };
@@ -86,11 +91,12 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
           <AnalysisResult
             topSoils={topSoils}
-            health={health}
+            soilHealth={soilHealth}
             acres={acres}
             slope={slope}
             topCrops={topCrops}
             erosionClass={erosionClass}
+            currentHealth={currentHealth}
           ></AnalysisResult>
         </>
       );

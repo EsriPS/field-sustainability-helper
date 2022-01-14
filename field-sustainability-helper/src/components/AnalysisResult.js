@@ -2,11 +2,12 @@ import { strings } from "../configs/default";
 
 function AnalysisResult({
   topSoils,
-  health,
+  soilHealth,
   acres,
   slope,
   topCrops,
   erosionClass,
+  currentHealth,
 }) {
   const cardStyle = {
     border: "1px solid gray",
@@ -26,19 +27,19 @@ function AnalysisResult({
     marginTop: "5px",
   };
 
-  if (health === "GREAT") {
+  if (soilHealth === "GREAT") {
     healthDot.backgroundColor = "green";
-  } else if (health === "GOOD") {
+  } else if (soilHealth === "GOOD") {
     healthDot.backgroundColor = "yellow";
-  } else if (health === "OKAY") {
+  } else if (soilHealth === "OKAY") {
     healthDot.backgroundColor = "orange";
-  } else if (health === "BAD") {
+  } else if (soilHealth === "BAD") {
     healthDot.backgroundColor = "red";
   }
 
   return (
     topSoils &&
-    health &&
+    soilHealth &&
     acres &&
     slope &&
     topCrops && (
@@ -88,7 +89,8 @@ function AnalysisResult({
             <h5>{strings.slope}</h5>
           </div>
           <div style={cardStyle}>
-            <h5>{strings.health21}</h5>
+            <div style={largerFontSize}>{currentHealth.toFixed(2)}</div>
+            <h5>{strings.health19}</h5>
           </div>
           <div style={cardStyle}>
             <div style={largerFontSize}>{erosionClass}</div>
