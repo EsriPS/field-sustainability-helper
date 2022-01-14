@@ -1,16 +1,19 @@
-// import React, { useEffect, useState, useRef } from "react";
-
 import { strings } from "../configs/default";
 
 function AnalysisResult({ topSoils, health, acres, slope }) {
   const cardStyle = {
-    border: "1px solid",
+    border: "1px solid gray",
     textAlign: "center",
+    padding: "10px",
+  };
+
+  const largerFontSize = {
+    fontSize: "26px",
   };
 
   let healthDot = {
-    height: "25px",
-    width: "25px",
+    height: "40px",
+    width: "40px",
     borderRadius: "50%",
     display: "inline-block",
     marginTop: "5px",
@@ -36,17 +39,22 @@ function AnalysisResult({ topSoils, health, acres, slope }) {
             display: "grid",
             gridTemplateColumns: "50% 50%",
             marginTop: "5vh",
+            border: "1px solid gray",
           }}
         >
           <div style={cardStyle}>
-            {acres.toFixed(1)}
+            <div style={largerFontSize}>{acres.toFixed(1)}</div>
             <h5>{strings.acres}</h5>
           </div>
           <div style={cardStyle}>
             {topSoils &&
               topSoils.length > 0 &&
               topSoils.map((soilName, index) => {
-                return <p key={index}>{soilName}</p>;
+                return (
+                  <p key={index} style={{ fontSize: "small" }}>
+                    {soilName}
+                  </p>
+                );
               })}
             <h5>{strings.soilType}</h5>
           </div>
@@ -55,16 +63,18 @@ function AnalysisResult({ topSoils, health, acres, slope }) {
             <h5>{strings.soilHealth}</h5>
           </div>
           <div style={cardStyle}>
+            <div style={largerFontSize}>Hardcoded Corn</div>
             <h5>{strings.crop21}</h5>
           </div>
           <div style={cardStyle}>
-            {slope.toFixed(1)}
+            <div style={largerFontSize}>{slope.toFixed(1)}</div>
             <h5>{strings.slope}</h5>
           </div>
           <div style={cardStyle}>
             <h5>{strings.health21}</h5>
           </div>
           <div style={cardStyle}>
+            <div style={largerFontSize}></div>
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>

@@ -12,7 +12,7 @@ import {
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
@@ -63,6 +63,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     // erosion class
     const avgErosion = await getAvgErosion(graphic.geometry, view, apiKey);
+    console.log("TODO: use avgErosion:", avgErosion);
 
     const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
     console.log(crops);
@@ -96,7 +97,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   return (
     <div
       style={{
-        height: "calc(100vh - 60px)",
+        overflow: "auto",
         width: "450px",
         borderRight: "solid",
         display: "flex",
