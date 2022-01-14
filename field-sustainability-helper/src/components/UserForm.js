@@ -14,10 +14,10 @@ function UserForm({ formSubmitted }) {
 
   const submit = (evt) => {
     formSubmitted({
-      tilled: tillInput.current.value,
-      plantedCover: plantInput.current.value,
-      rotated: rotateInput.current.value,
-      irrigated: irrigatedInput.current.value,
+      tilled: tillInput.current.checked,
+      plantedCover: plantInput.current.checked,
+      rotated: rotateInput.current.checked,
+      irrigated: irrigatedInput.current.checked,
     });
   };
 

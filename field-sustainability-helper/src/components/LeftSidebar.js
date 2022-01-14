@@ -1,6 +1,7 @@
 import EsriSketch from "./EsriSketch";
 import AnalysisResult from "./AnalysisResult";
 import UserForm from "./UserForm";
+import SustainabilityScore from "./SustainabilityScore";
 import catLoading from "../images/cat-loading.gif";
 
 import {
@@ -30,11 +31,13 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [slope, setSlope] = useState(null);
   const [topCrops, setTopCrops] = useState(null);
   const [erosionClass, setErosionClass] = useState(null);
+  const [erosionClassVal, setErosionClassVal] = useState(null);
   const [currentHealth, setCurrentHealth] = useState(null);
   const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
   const [croppedImageLayers, setCroppedImageLayers] = useState({});
   const [health5YearData, setHealth5YearData] = useState(null);
   const [showUserForm, setShowUserForm] = useState(false);
+  const [showSustainabilityScore, setShowSustainabilityScore] = useState(false);
   const [formData, setFormData] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -97,6 +100,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     const erosionInfo = await getErosionClass(graphic.geometry, view, apiKey);
     const erosionClass = erosionInfo.description;
     setErosionClass(erosionClass);
+    setErosionClassVal(erosionInfo.class);
 
     const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
     setTopCrops(crops.topCrops);
@@ -115,6 +119,22 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     setBusy(false);
   };
 
+  const renderSustainabilityScore = () => {
+    if (showSustainabilityScore) {
+      return (
+        <SustainabilityScore
+          cancelClicked={() => {
+            setShowSustainabilityScore(false);
+          }}
+          userInputs={formData}
+          soilHealth={soilHealth}
+          erosion={erosionClassVal}>
+
+        </SustainabilityScore>
+      )
+    }
+  };
+
   const renderUserForm = () => {
     if (showUserForm) {
       return (
@@ -122,8 +142,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
           formSubmitted={(formData) => {
             setFormData(formData);
             setShowUserForm(false);
-            console.log(formData);
-            //TODO: do something with our new input
+            setShowSustainabilityScore(true);
           }}
         ></UserForm>
       );
@@ -143,7 +162,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     if (busy) {
       return <img alt="loading..." src={catLoading} width="400"></img>;
-    } else if (!showUserForm) {
+    } else if (!showUserForm && !showSustainabilityScore) {
       return (
         <>
           <EsriSketch
@@ -193,6 +212,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     >
       {renderLeftSidebar()}
       {renderUserForm()}
+      {renderSustainabilityScore()}
     </div>
   );
 }
