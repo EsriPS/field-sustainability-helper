@@ -93,7 +93,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   return (
     <div
       style={{
-        height: "calc(100vh - 60px)",
+        overflow: "auto",
         width: "450px",
         borderRight: "solid",
         display: "flex",
