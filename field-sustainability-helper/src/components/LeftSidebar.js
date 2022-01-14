@@ -7,7 +7,7 @@ import {
   getHealth,
   getAcreage,
   getAvgSlope,
-  getAvgErosion,
+  getErosionClass,
   getCrops,
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
@@ -21,6 +21,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [acres, setAcres] = useState(null);
   const [slope, setSlope] = useState(null);
   const [topCrops, setTopCrops] = useState(null);
+  const [erosionClass, setErosionClass] = useState(null);
   const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -61,8 +62,8 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     const avgSlope = await getAvgSlope(graphic.geometry, view, apiKey);
     setSlope(avgSlope);
 
-    const avgErosion = await getAvgErosion(graphic.geometry, view, apiKey);
-    console.log("TODO: use avgErosion:", avgErosion);
+    const erosionClass = await getErosionClass(graphic.geometry, view, apiKey);
+    setErosionClass(erosionClass);
 
     const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
     setTopCrops(crops.topCrops);
@@ -88,6 +89,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
             acres={acres}
             slope={slope}
             topCrops={topCrops}
+            erosionClass={erosionClass}
           ></AnalysisResult>
         </>
       );
