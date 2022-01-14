@@ -11,7 +11,7 @@ import {
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
@@ -62,6 +62,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     // erosion class
     const avgErosion = await getAvgErosion(graphic.geometry, view, apiKey);
+    console.log("TODO: use avgErosion:", avgErosion);
 
     setBusy(false);
   };

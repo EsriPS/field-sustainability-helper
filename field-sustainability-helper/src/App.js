@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import EsriMap from "./components/EsriMap";
 import LeftSidebar from "./components/LeftSidebar";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 
 function App() {
   const [view, setView] = useState(null);
@@ -22,7 +22,10 @@ function App() {
         title={strings.title}
       ></Header>
       <section className="container">
-        <LeftSidebar sketchLabel={strings.sketchLabel} view={view}></LeftSidebar>
+        <LeftSidebar
+          sketchLabel={strings.sketchLabel}
+          view={view}
+        ></LeftSidebar>
         <EsriMap webMapId={items.webMap} setView={setMapView}></EsriMap>
       </section>
     </div>

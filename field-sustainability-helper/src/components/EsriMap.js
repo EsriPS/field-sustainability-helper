@@ -1,14 +1,11 @@
 import WebMap from "@arcgis/core/WebMap";
 import MapView from "@arcgis/core/views/MapView";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-import Extent from "@arcgis/core/geometry/Extent";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 function EsriMap({ webMapId, setView }) {
   const viewDiv = useRef(null);
-
-  const [state, setState] = useState({});
 
   useEffect(() => {
     if (viewDiv) {
@@ -30,8 +27,6 @@ function EsriMap({ webMapId, setView }) {
       });
 
       setView(view);
-
-      // setState({ ...state, ...{ webMap, view } });
     }
   }, [webMapId]);
 
