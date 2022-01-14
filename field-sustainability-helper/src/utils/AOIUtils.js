@@ -7,7 +7,8 @@ import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import ImageHistogramParameters from "@arcgis/core/rest/support/ImageHistogramParameters";
 import RasterFunction from "@arcgis/core/layers/support/RasterFunction";
 import MosaicRule from "@arcgis/core/layers/support/MosaicRule";
-import TimeExtent from "@arcgis/core/TimeExtent";
+import FeatureEffect from "@arcgis/core/layers/support/FeatureEffect";
+import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 
 export async function getStatisticsHistograms(
   url,
@@ -209,6 +210,45 @@ export async function getAvgNdvi(geometry, view, year = 2020, apiKey = null) {
   }
 
   return 0;
+}
+
+export function clipAndGetCrops(geometry, apiKey = null) {
+  return clipAndGetImageryLayer(services.image.crops, geometry, apiKey);
+}
+
+export function clipAndGetElevation(geometry, apiKey = null) {
+  return clipAndGetImageryLayer(services.image.elevation, geometry, apiKey);
+}
+
+export function clipAndGetErosion(geometry, apiKey = null) {
+  return clipAndGetImageryLayer(services.image.erosion, geometry, apiKey);
+}
+
+export function clipAndGetNdvi(geometry, apiKey = null) {
+  return clipAndGetImageryLayer(services.image.naip, geometry, apiKey);
+}
+
+export function clipAndGetSsurgo(geometry, apiKey = null) {
+  return clipAndGetImageryLayer(services.image.ssurgo, geometry, apiKey);
+}
+
+export function clipAndGetImageryLayer(url, geometry, apiKey = null) {
+  if (
+    !geometry ||
+    (geometry?.type !== "polygon" && geometry?.type !== "extent")
+  )
+    return null;
+
+  const layer = new ImageryLayer({ url, apiKey });
+  layer.renderingRule = new RasterFunction({
+    functionName: "Clip",
+    functionArguments: {
+      ClippingGeometry: geometry,
+      ClippingType: 1,
+    },
+  });
+
+  return layer;
 }
 
 // SCORE BASED ON EROSION SCORE (FOR NOW)
