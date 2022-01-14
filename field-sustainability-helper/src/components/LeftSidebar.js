@@ -8,6 +8,7 @@ import {
   getAcreage,
   getAvgSlope,
   getAvgErosion,
+  getCrops,
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
@@ -15,7 +16,7 @@ import React, { useEffect, useState, useRef } from "react";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
-  const [topCrops, setTopCrops] = useState(null);
+  const [topSoils, setTopSoils] = useState(null);
   const [health, setHealth] = useState(null);
   const [acres, setAcres] = useState(null);
   const [slope, setSlope] = useState(null);
@@ -47,8 +48,8 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     _resultGraphicsLayer.removeAll();
 
     const soilInfo = await getSoils(graphic.geometry, apiKey);
-    _resultGraphicsLayer.addMany(soilInfo.all_results);
-    setTopCrops(soilInfo.top_crops);
+    _resultGraphicsLayer.addMany(soilInfo.allResults);
+    setTopSoils(soilInfo.topSoils);
 
     const healthInfo = await getHealth(graphic.geometry, view, apiKey);
     setHealth(healthInfo);
@@ -62,6 +63,9 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     // erosion class
     const avgErosion = await getAvgErosion(graphic.geometry, view, apiKey);
+
+    const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
+    console.log(crops);
 
     setBusy(false);
   };
@@ -79,7 +83,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
           ></EsriSketch>
 
           <AnalysisResult
-            topCrops={topCrops}
+            topSoils={topSoils}
             health={health}
             acres={acres}
             slope={slope}
