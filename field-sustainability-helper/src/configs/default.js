@@ -41,4 +41,10 @@ export const strings = {
   soilsLayer: "SSURGO Soil",
   naipLayer: "USA NAIP",
   croplandLayer: "USDA Cropland",
+  sustainabilityButton: "Get my sustainability score",
+  tillInput: "Did you till last year?",
+  plantInput: "Did you plant cover crops?",
+  rotateInput: "Did you rotate crops this year?",
+  irrigatedInput: "Are you irrigated?",
+  submitButton: "Submit",
 };

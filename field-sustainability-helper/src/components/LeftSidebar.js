@@ -1,5 +1,6 @@
 import EsriSketch from "./EsriSketch";
 import AnalysisResult from "./AnalysisResult";
+import UserForm from "./UserForm";
 import catLoading from "../images/cat-loading.gif";
 
 import {
@@ -15,8 +16,9 @@ import {
   clipAndGetSsurgo,
   clipAndGetElevation,
   clipAndGetErosion,
+  fetchNdviYearImages,
 } from "../utils/AOIUtils";
-import { apiKey } from "../configs/default";
+import { apiKey, strings } from "../configs/default";
 
 import React, { useState } from "react";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
@@ -31,6 +33,9 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [currentHealth, setCurrentHealth] = useState(null);
   const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
   const [croppedImageLayers, setCroppedImageLayers] = useState({});
+  const [health5YearData, setHealth5YearData] = useState(null);
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [formData, setFormData] = useState(null);
   const [busy, setBusy] = useState(false);
 
   /**
@@ -99,13 +104,46 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     const avgNdvi = await getAvgNdvi(graphic.geometry, view, 2019, apiKey);
     setCurrentHealth(avgNdvi);
 
+    const images = await fetchNdviYearImages(
+      2015,
+      2019,
+      graphic.geometry,
+      apiKey
+    );
+    if (images.length > 0) setHealth5YearData(images[0]);
+
     setBusy(false);
   };
 
+  const renderUserForm = () => {
+    if (showUserForm) {
+      return (
+        <UserForm
+          formSubmitted={(formData) => {
+            setFormData(formData);
+            setShowUserForm(false);
+            console.log(formData);
+            //TODO: do something with our new input
+          }}
+        ></UserForm>
+      );
+    } else return "";
+  };
+
   const renderLeftSidebar = () => {
+    const haveData =
+      topSoils &&
+      soilHealth &&
+      acres &&
+      slope &&
+      topCrops &&
+      erosionClass &&
+      currentHealth &&
+      health5YearData;
+
     if (busy) {
       return <img alt="loading..." src={catLoading} width="400"></img>;
-    } else {
+    } else if (!showUserForm) {
       return (
         <>
           <EsriSketch
@@ -122,10 +160,24 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
             topCrops={topCrops}
             erosionClass={erosionClass}
             currentHealth={currentHealth}
+            health5YearData={health5YearData}
           ></AnalysisResult>
+
+          <button
+            style={{
+              marginTop: "8px",
+              height: "40px",
+              display: haveData && !busy ? "" : "none",
+            }}
+            onClick={() => {
+              setShowUserForm(true);
+            }}
+          >
+            {strings.sustainabilityButton}
+          </button>
         </>
       );
-    }
+    } else return "";
   };
 
   return (
@@ -140,6 +192,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
       }}
     >
       {renderLeftSidebar()}
+      {renderUserForm()}
     </div>
   );
 }
