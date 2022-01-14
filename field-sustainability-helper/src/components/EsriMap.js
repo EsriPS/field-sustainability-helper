@@ -6,6 +6,7 @@ import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
 import Basemap from "@arcgis/core/Basemap";
 import BasemapGallery from "@arcgis/core/widgets/BasemapGallery";
+import LayerList from "@arcgis/core/widgets/LayerList";
 import Search from "@arcgis/core/widgets/Search";
 import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
 import Expand from "@arcgis/core/widgets/Expand";
@@ -40,19 +41,29 @@ function EsriMap({ webMapId, setView }) {
       setView(view);
 
       const searchWidget = new Search({
-        view: view
+        view: view,
+      });
+
+      const layerList = new LayerList({
+        view: view,
+      });
+
+      const layerListExpand = new Expand({
+        view: view,
+        content: layerList,
+        group: "top-left",
       });
 
       const basemapSwitcher = new BasemapToggle({
         view: view,
-        nextBasemap: "arcgis-streets"
+        nextBasemap: "arcgis-streets",
       });
 
       const basemapSwitcherExpand = new Expand({
         expandIconClass: "esri-icon-basemap",
         view: view,
         content: basemapSwitcher,
-        group: "top-right"
+        group: "top-right",
       });
 
       const soilBasemap = new Basemap({
@@ -94,15 +105,16 @@ function EsriMap({ webMapId, setView }) {
         expandIconClass: "esri-icon-layers",
         view: view,
         content: basemapGalleryWidget,
-        group: "top-right"
-      })
+        group: "top-right",
+      });
 
       view.ui.add(searchWidget, {
-        position: "top-right"
+        position: "top-right",
       });
 
       view.ui.add([basemapSwitcherExpand, basemapGalleryExpand], "top-right");
 
+      view.ui.add(layerListExpand, "top-left");
     }
   }, [webMapId]);
 

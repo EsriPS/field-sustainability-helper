@@ -7,8 +7,6 @@ import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import ImageHistogramParameters from "@arcgis/core/rest/support/ImageHistogramParameters";
 import RasterFunction from "@arcgis/core/layers/support/RasterFunction";
 import MosaicRule from "@arcgis/core/layers/support/MosaicRule";
-import FeatureEffect from "@arcgis/core/layers/support/FeatureEffect";
-import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 
 export async function getStatisticsHistograms(
   url,
@@ -247,6 +245,7 @@ export function clipAndGetImageryLayer(url, geometry, apiKey = null) {
       ClippingType: 1,
     },
   });
+  layer.visible = false;
 
   return layer;
 }
