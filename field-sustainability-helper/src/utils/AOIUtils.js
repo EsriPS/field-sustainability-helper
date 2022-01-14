@@ -39,7 +39,12 @@ export async function getCropsStatisticsHistograms(
   view,
   apiKey = null
 ) {
-  return getStatisticsHistograms(services.image.crops, geometry, view, apiKey);
+  return await getStatisticsHistograms(
+    services.image.crops,
+    geometry,
+    view,
+    apiKey
+  );
 }
 
 export async function getElevationStatisticsHistograms(
@@ -47,7 +52,7 @@ export async function getElevationStatisticsHistograms(
   view,
   apiKey = null
 ) {
-  return getStatisticsHistograms(
+  return await getStatisticsHistograms(
     services.image.elevation,
     geometry,
     view,
@@ -60,7 +65,36 @@ export async function getNaipStatisticsHistograms(
   view,
   apiKey = null
 ) {
-  return getStatisticsHistograms(services.image.naip, geometry, view, apiKey);
+  return await getStatisticsHistograms(
+    services.image.naip,
+    geometry,
+    view,
+    apiKey
+  );
+}
+
+export async function getErosionStatisticsHistograms(
+  geometry,
+  view,
+  apiKey = null
+) {
+  return await getStatisticsHistograms(
+    services.image.erosion,
+    geometry,
+    view,
+    apiKey
+  );
+}
+
+// SCORE CLOSER TO 100 == GOOD, SCORE CLOSER TO 0 == BAD
+export async function calculateErosionScore(geometry, view, apiKey = null) {
+  const results = await getErosionStatisticsHistograms(geometry, view, apiKey);
+
+  if (results.statistics.length > 0) {
+    return 100 * (1 - results.statistics[0].avg / 4);
+  }
+
+  return 0;
 }
 
 export async function getSoils(geometry, apiKey = null) {
@@ -122,32 +156,21 @@ export async function getSoils(geometry, apiKey = null) {
   };
 }
 
+// SCORE BASED ON EROSION SCORE (FOR NOW)
 const HEALTH_STRINGS = ["BAD", "OKAY", "GOOD", "GREAT"];
-export async function getHealth(geometry, apiKey = null) {
+export async function getHealth(geometry, view, apiKey = null) {
   if (
     !geometry ||
     (geometry?.type !== "polygon" && geometry?.type !== "extent")
   )
     return null;
 
-  const soilsLayer = new FeatureLayer({ url: services.feature.soils, apiKey });
+  const erosionScore = await calculateErosionScore(geometry, view, apiKey);
+  const health_ind = Math.min(
+    Math.floor(erosionScore * (4 / 100)),
+    HEALTH_STRINGS.length - 1
+  );
 
-  const soilsQuery = new Query();
-  soilsQuery.where = "1=1";
-  soilsQuery.outFields = "*";
-  soilsQuery.geometry = geometry;
-  soilsQuery.outSpatialReference = geometry.spatialReference;
-
-  const results = await soilsLayer.queryFeatures(soilsQuery);
-  let total_tfact = 0;
-  const count = results?.features.length;
-  for (const feature_ind in results?.features) {
-    const feature = results.features[feature_ind];
-    total_tfact += feature.attributes["tfact"];
-  }
-  const average_tfact = total_tfact / count;
-
-  const health_ind = Math.min(average_tfact, HEALTH_STRINGS.length - 1);
   return HEALTH_STRINGS[health_ind];
 }
 

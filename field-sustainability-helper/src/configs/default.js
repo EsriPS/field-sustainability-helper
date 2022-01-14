@@ -12,6 +12,8 @@ export const services = {
       "https://elevation.arcgis.com/arcgis/rest/services/NED30m/ImageServer",
     crops:
       "https://pdiimagery.azurecloudgov.us/arcgis/rest/services/CDL_WM/ImageServer",
+    erosion:
+      "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Erosion_Class/ImageServer",
   },
 };
 
@@ -33,5 +35,5 @@ export const strings = {
   slope: "Slope",
   health21: "2021 Health",
   erosionClass: "Erosion Class",
-  health5Year: "5 Year Health"
+  health5Year: "5 Year Health",
 };

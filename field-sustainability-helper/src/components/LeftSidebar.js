@@ -9,6 +9,7 @@ import {
   getCropsStatisticsHistograms,
   getNaipStatisticsHistograms,
   getElevationStatisticsHistograms,
+  getErosionStatisticsHistograms,
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
@@ -50,18 +51,25 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     _resultGraphicsLayer.addMany(soilInfo.all_results);
     setTopCrops(soilInfo.top_crops);
 
-    let healthInfo = await getHealth(graphic.geometry, apiKey);
+    let healthInfo = await getHealth(graphic.geometry, view, apiKey);
     setHealth(healthInfo);
 
     const totalAcres = await getAcreage(graphic.geometry, apiKey);
     setAcres(totalAcres);
 
-    const cropStats = await getCropsStatisticsHistograms(
-      graphic.geometry,
-      view,
-      apiKey
-    );
-    console.log(cropStats);
+    // const cropStats = await getCropsStatisticsHistograms(
+    //   graphic.geometry,
+    //   view,
+    //   apiKey
+    // );
+    // console.log(cropStats);
+
+    // const erosionStats = await getErosionStatisticsHistograms(
+    //   graphic.geometry,
+    //   view,
+    //   apiKey
+    // );
+    // console.log(erosionStats);
 
     // const naipStats = await getNaipStatisticsHistograms(
     //   graphic.geometry,
