@@ -5,12 +5,14 @@ import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import ImageHistogramParameters from "@arcgis/core/rest/support/ImageHistogramParameters";
+import RasterFunction from "@arcgis/core/layers/support/RasterFunction";
 
 export async function getStatisticsHistograms(
   url,
   geometry,
   view,
-  apiKey = null
+  apiKey = null,
+  rasterFunction = null
 ) {
   if (
     !geometry ||
@@ -29,69 +31,41 @@ export async function getStatisticsHistograms(
         wkid: view.spatialReference.wkid,
       },
     },
+    renderingRule: rasterFunction,
   });
 
   return await layer.computeStatisticsHistograms(params);
 }
 
-export async function getCropsStatisticsHistograms(
-  geometry,
-  view,
-  apiKey = null
-) {
-  return await getStatisticsHistograms(
-    services.image.crops,
-    geometry,
-    view,
-    apiKey
-  );
-}
-
-export async function getElevationStatisticsHistograms(
-  geometry,
-  view,
-  apiKey = null
-) {
-  return await getStatisticsHistograms(
-    services.image.elevation,
-    geometry,
-    view,
-    apiKey
-  );
-}
-
-export async function getNaipStatisticsHistograms(
-  geometry,
-  view,
-  apiKey = null
-) {
-  return await getStatisticsHistograms(
-    services.image.naip,
-    geometry,
-    view,
-    apiKey
-  );
-}
-
-export async function getErosionStatisticsHistograms(
-  geometry,
-  view,
-  apiKey = null
-) {
-  return await getStatisticsHistograms(
+export async function getAvgErosion(geometry, view, apiKey = null) {
+  const results = await getStatisticsHistograms(
     services.image.erosion,
     geometry,
     view,
     apiKey
   );
-}
-
-// SCORE CLOSER TO 100 == GOOD, SCORE CLOSER TO 0 == BAD
-export async function calculateErosionScore(geometry, view, apiKey = null) {
-  const results = await getErosionStatisticsHistograms(geometry, view, apiKey);
 
   if (results.statistics.length > 0) {
-    return 100 * (1 - results.statistics[0].avg / 4);
+    return results.statistics[0].avg;
+  }
+
+  return 0;
+}
+
+export async function getAvgSlope(geometry, view, apiKey = null) {
+  const slopeRF = new RasterFunction();
+  slopeRF.functionName = "Slope_Percent";
+
+  const results = await getStatisticsHistograms(
+    services.image.elevation,
+    geometry,
+    view,
+    apiKey,
+    slopeRF
+  );
+
+  if (results.statistics.length > 0) {
+    return results.statistics[0].avg;
   }
 
   return 0;
@@ -165,7 +139,8 @@ export async function getHealth(geometry, view, apiKey = null) {
   )
     return null;
 
-  const erosionScore = await calculateErosionScore(geometry, view, apiKey);
+  const avgErosion = await getAvgErosion(geometry, view, apiKey);
+  const erosionScore = 100 * (1 - avgErosion / 4);
   const health_ind = Math.min(
     Math.floor(erosionScore * (4 / 100)),
     HEALTH_STRINGS.length - 1

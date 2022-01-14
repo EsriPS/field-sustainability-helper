@@ -6,10 +6,8 @@ import {
   getSoils,
   getHealth,
   getAcreage,
-  getCropsStatisticsHistograms,
-  getNaipStatisticsHistograms,
-  getElevationStatisticsHistograms,
-  getErosionStatisticsHistograms,
+  getAvgSlope,
+  getAvgErosion,
 } from "../utils/AOIUtils";
 import { apiKey } from "../configs/default";
 
@@ -47,43 +45,21 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     _resultGraphicsLayer.removeAll();
 
-    let soilInfo = await getSoils(graphic.geometry, apiKey);
+    const soilInfo = await getSoils(graphic.geometry, apiKey);
     _resultGraphicsLayer.addMany(soilInfo.all_results);
     setTopCrops(soilInfo.top_crops);
 
-    let healthInfo = await getHealth(graphic.geometry, view, apiKey);
+    const healthInfo = await getHealth(graphic.geometry, view, apiKey);
     setHealth(healthInfo);
 
     const totalAcres = await getAcreage(graphic.geometry, apiKey);
     setAcres(totalAcres);
 
-    // const cropStats = await getCropsStatisticsHistograms(
-    //   graphic.geometry,
-    //   view,
-    //   apiKey
-    // );
-    // console.log(cropStats);
+    // slope
+    const avgSlope = await getAvgSlope(graphic.geometry, view, apiKey);
 
-    // const erosionStats = await getErosionStatisticsHistograms(
-    //   graphic.geometry,
-    //   view,
-    //   apiKey
-    // );
-    // console.log(erosionStats);
-
-    // const naipStats = await getNaipStatisticsHistograms(
-    //   graphic.geometry,
-    //   view,
-    //   apiKey
-    // );
-    // console.log(naipStats);
-
-    // const elevationStats = await getElevationStatisticsHistograms(
-    //   graphic.geometry,
-    //   view,
-    //   apiKey
-    // );
-    // console.log(elevationStats);
+    // erosion class
+    const avgErosion = await getAvgErosion(graphic.geometry, view, apiKey);
 
     setBusy(false);
   };
