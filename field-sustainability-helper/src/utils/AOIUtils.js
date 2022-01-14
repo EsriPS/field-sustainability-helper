@@ -185,9 +185,35 @@ export async function getCrops(geometry, view, year = 2020, apiKey = null) {
   };
 }
 
+export async function getAvgNdvi(geometry, view, year = 2020, apiKey = null) {
+  const ndviRF = new RasterFunction();
+  ndviRF.functionName = "NaturalColor";
+
+  const ndviMR = new MosaicRule();
+  ndviMR.where = `Year = ${year}`;
+
+  const results = await getStatisticsHistograms(
+    services.image.naip,
+    geometry,
+    view,
+    apiKey,
+    ndviRF,
+    ndviMR
+  );
+
+  const statisticsHistograms = results.statisticsHistograms;
+  const attributeMapping = results.attributeMapping;
+
+  if (statisticsHistograms.statistics.length > 0) {
+    return statisticsHistograms.statistics[0].avg;
+  }
+
+  return 0;
+}
+
 // SCORE BASED ON EROSION SCORE (FOR NOW)
 const HEALTH_STRINGS = ["BAD", "OKAY", "GOOD", "GREAT"];
-export async function getHealth(geometry, view, apiKey = null) {
+export async function getSoilHealth(geometry, view, apiKey = null) {
   if (
     !geometry ||
     (geometry?.type !== "polygon" && geometry?.type !== "extent")
