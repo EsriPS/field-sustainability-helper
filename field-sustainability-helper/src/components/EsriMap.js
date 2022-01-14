@@ -1,11 +1,8 @@
-import { services, strings, apiKey } from "../configs/default";
+import { apiKey } from "../configs/default";
 
 import WebMap from "@arcgis/core/WebMap";
 import MapView from "@arcgis/core/views/MapView";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-import ImageryLayer from "@arcgis/core/layers/ImageryLayer";
-import Basemap from "@arcgis/core/Basemap";
-import BasemapGallery from "@arcgis/core/widgets/BasemapGallery";
 import LayerList from "@arcgis/core/widgets/LayerList";
 import Search from "@arcgis/core/widgets/Search";
 import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
@@ -63,56 +60,15 @@ function EsriMap({ webMapId, setView }) {
         expandIconClass: "esri-icon-basemap",
         view: view,
         content: basemapSwitcher,
-        group: "top-right",
-      });
-
-      const soilBasemap = new Basemap({
-        baseLayers: [
-          new ImageryLayer({
-            url: services.image.ssurgo,
-          }),
-        ],
-        title: strings.soilsLayer,
-        // thumbnailUrl: ???
-      });
-
-      const naipBasemap = new Basemap({
-        baseLayers: [
-          new ImageryLayer({
-            url: services.image.naip,
-          }),
-        ],
-        title: strings.naipLayer,
-        // thumbnailUrl: ???
-      });
-
-      const cropBasemap = new Basemap({
-        baseLayers: [
-          new ImageryLayer({
-            url: services.image.crops,
-          }),
-        ],
-        title: strings.croplandLayer,
-        // thumbnailUrl: ???
-      });
-
-      const basemapGalleryWidget = new BasemapGallery({
-        view: view,
-        source: [soilBasemap, naipBasemap, cropBasemap],
-      });
-
-      const basemapGalleryExpand = new Expand({
-        expandIconClass: "esri-icon-layers",
-        view: view,
-        content: basemapGalleryWidget,
-        group: "top-right",
       });
 
       view.ui.add(searchWidget, {
         position: "top-right",
       });
 
-      view.ui.add([basemapSwitcherExpand, basemapGalleryExpand], "top-right");
+      view.ui.add(basemapSwitcherExpand, {
+        position: "top-right"
+      });
 
       view.ui.add(layerListExpand, "top-left");
     }

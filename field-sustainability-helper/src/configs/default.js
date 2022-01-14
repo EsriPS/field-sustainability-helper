@@ -47,4 +47,6 @@ export const strings = {
   rotateInput: "Did you rotate crops this year?",
   irrigatedInput: "Are you irrigated?",
   submitButton: "Submit",
+  sustainabilityScoreLabel: "Sustainability Score: ",
+  cancel: "Cancel",
 };
