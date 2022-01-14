@@ -2,8 +2,9 @@ import { strings } from "../configs/default";
 
 function AnalysisResult({ topCrops, health, acres, slope }) {
   const cardStyle = {
-    border: "1px solid",
+    border: "1px solid gray",
     textAlign: "center",
+    padding: "10px",
   };
 
   let healthDot = {
@@ -34,6 +35,7 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
             display: "grid",
             gridTemplateColumns: "50% 50%",
             marginTop: "5vh",
+            border: "1px solid gray",
           }}
         >
           <div style={cardStyle}>
