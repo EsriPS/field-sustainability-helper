@@ -7,9 +7,13 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
     padding: "10px",
   };
 
+  const largerFontSize = {
+    fontSize: "26px"
+  };
+
   let healthDot = {
-    height: "25px",
-    width: "25px",
+    height: "40px",
+    width: "40px",
     borderRadius: "50%",
     display: "inline-block",
     marginTop: "5px",
@@ -39,14 +43,16 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
           }}
         >
           <div style={cardStyle}>
+            <div style={largerFontSize}>
             {acres.toFixed(1)}
+            </div>
             <h5>{strings.acres}</h5>
           </div>
           <div style={cardStyle}>
             {topCrops &&
               topCrops.length > 0 &&
               topCrops.map((cropName, index) => {
-                return <p key={index}>{cropName}</p>;
+                return <p key={index} style={{fontSize: "small"}}>{cropName}</p>;
               })}
             <h5>{strings.soilType}</h5>
           </div>
@@ -55,16 +61,24 @@ function AnalysisResult({ topCrops, health, acres, slope }) {
             <h5>{strings.soilHealth}</h5>
           </div>
           <div style={cardStyle}>
+          <div style={largerFontSize}>
+            Hardcoded Corn
+          </div>
             <h5>{strings.crop21}</h5>
           </div>
           <div style={cardStyle}>
+          <div style={largerFontSize}>
             {slope.toFixed(1)}
+            </div>
             <h5>{strings.slope}</h5>
           </div>
           <div style={cardStyle}>
             <h5>{strings.health21}</h5>
           </div>
           <div style={cardStyle}>
+            <div style={largerFontSize}>
+
+            </div>
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>
