@@ -5,6 +5,18 @@ import Header from "./components/Header";
 import EsriMap from "./components/EsriMap";
 import LeftSidebar from "./components/LeftSidebar";
 
+// Calcite:
+import "@esri/calcite-components/dist/components/calcite-button";
+import "@esri/calcite-components/dist/components/calcite-panel";
+import "@esri/calcite-components/dist/components/calcite-shell";
+import "@esri/calcite-components/dist/components/calcite-action";
+import "@esri/calcite-components/dist/components/calcite-action-bar";
+
+import "@esri/calcite-components/dist/calcite/calcite.css";
+
+import { CalciteShell } from "@esri/calcite-components-react";
+// import { CalciteShellPanel } from "@esri/calcite-components-react";
+
 import React, { useState } from "react";
 
 function App() {
@@ -16,18 +28,16 @@ function App() {
 
   return (
     <div className="App">
-      <Header
-        color="white"
-        backgroundColor="#212121"
-        title={strings.title}
-      ></Header>
-      <section className="container">
+      <CalciteShell>
+        <Header title={strings.title}></Header>
+
         <LeftSidebar
           sketchLabel={strings.sketchLabel}
           view={view}
         ></LeftSidebar>
+
         <EsriMap webMapId={items.webMap} setView={setMapView}></EsriMap>
-      </section>
+      </CalciteShell>
     </div>
   );
 }

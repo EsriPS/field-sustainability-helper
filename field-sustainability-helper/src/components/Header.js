@@ -1,19 +1,8 @@
 function Header({ color, backgroundColor, title }) {
   return (
-    <div
-      style={{
-        height: "60px",
-        width: "100%",
-        color,
-        backgroundColor,
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ marginLeft: "8px", fontWeight: "bold", fontSize: "18px" }}>
-        {title}
-      </div>
-    </div>
+    <h2 slot="header" style={{ marginLeft: "1rem", marginRight: "1rem" }}>
+      {title}
+    </h2>
   );
 }
 

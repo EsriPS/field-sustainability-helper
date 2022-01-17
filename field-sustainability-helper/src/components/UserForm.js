@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-
 import { strings } from "../configs/default";
+import { CalciteButton } from "@esri/calcite-components-react";
 
 const inputStyle = {
   marginTop: "8px",
@@ -22,26 +22,42 @@ function UserForm({ formSubmitted }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{ display: "flex", flexDirection: "column", padding: "10px" }}>
       <label style={inputStyle}>
         {strings.tillInput}
-        <input ref={tillInput} type="checkbox"></input>
+        <input
+          ref={tillInput}
+          type="checkbox"
+          style={{ float: "right" }}
+        ></input>
       </label>
       <label style={inputStyle}>
         {strings.plantInput}
-        <input ref={plantInput} type="checkbox"></input>
+        <input
+          ref={plantInput}
+          type="checkbox"
+          style={{ float: "right" }}
+        ></input>
       </label>
       <label style={inputStyle}>
         {strings.rotateInput}
-        <input ref={rotateInput} type="checkbox"></input>
+        <input
+          ref={rotateInput}
+          type="checkbox"
+          style={{ float: "right" }}
+        ></input>
       </label>
       <label style={inputStyle}>
         {strings.irrigatedInput}
-        <input ref={irrigatedInput} type="checkbox"></input>
+        <input
+          ref={irrigatedInput}
+          type="checkbox"
+          style={{ float: "right" }}
+        ></input>
       </label>
-      <button style={inputStyle} onClick={submit}>
+      <CalciteButton style={inputStyle} onClick={submit}>
         {strings.submitButton}
-      </button>
+      </CalciteButton>
     </div>
   );
 }

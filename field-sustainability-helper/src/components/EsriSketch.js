@@ -68,20 +68,7 @@ function EsriSketch({ label, view, onSketchResultGraphic }) {
   }, [view, onSketchResultGraphic]);
 
   return (
-    <div>
-      <div
-        style={{
-          fontWeight: "bold",
-          fontSize: "16px",
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{ marginLeft: "4px", marginTop: "10px" }}
-        ref={sketchRef}
-      ></div>
-    </div>
+    <div style={{ marginLeft: "4px", marginTop: "10px" }} ref={sketchRef}></div>
   );
 }
 

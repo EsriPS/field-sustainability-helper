@@ -38,7 +38,7 @@ function AnalysisResult({
   const cardStyle = {
     border: "1px solid gray",
     textAlign: "center",
-    padding: "10px",
+    padding: "5px",
   };
 
   const largerFontSize = {
@@ -74,7 +74,7 @@ function AnalysisResult({
           style={{
             display: "grid",
             gridTemplateColumns: "50% 50%",
-            marginTop: "5vh",
+            margin: "1rem",
             border: "1px solid gray",
           }}
         >
@@ -102,11 +102,7 @@ function AnalysisResult({
             {topCrops &&
               topCrops.length > 0 &&
               topCrops.map((cropName, index) => {
-                return (
-                  <p key={index} style={largerFontSize}>
-                    {cropName}
-                  </p>
-                );
+                return <p key={index}>{cropName}</p>;
               })}
             <h5>{strings.crops20}</h5>
           </div>
@@ -119,14 +115,14 @@ function AnalysisResult({
             <h5>{strings.health19}</h5>
           </div>
           <div style={cardStyle}>
-            <div style={largerFontSize}>
+            <div style={{ fontSize: "20px" }}>
               {erosionClass.replaceAll("In this map unit, ", "")}
             </div>
             <h5>{strings.erosionClass}</h5>
           </div>
           <div style={cardStyle}>
-            <canvas ref={health5YearCanvas}></canvas>
-            <h5>{strings.health5Year}</h5>
+            {/* <canvas ref={health5YearCanvas}></canvas>
+            <h5>{strings.health5Year}</h5> */}
           </div>
         </div>
       </div>
