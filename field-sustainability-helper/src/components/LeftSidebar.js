@@ -1,219 +1,90 @@
-import EsriSketch from "./EsriSketch";
-import AnalysisResult from "./AnalysisResult";
-import UserForm from "./UserForm";
-import SustainabilityScore from "./SustainabilityScore";
-import catLoading from "../images/cat-loading.gif";
-
 import {
-  getSoils,
-  getSoilHealth,
-  getAcreage,
-  getAvgSlope,
-  getErosionClass,
-  getCrops,
-  getAvgNdvi,
-  clipAndGetCrops,
-  clipAndGetNdvi,
-  clipAndGetSsurgo,
-  clipAndGetElevation,
-  clipAndGetErosion,
-  fetchNdviYearImages,
-} from "../utils/AOIUtils";
-import { apiKey, strings } from "../configs/default";
+  CalciteShellPanel,
+  CalciteActionBar,
+  CalciteAction,
+  CalcitePanel,
+} from "@esri/calcite-components-react";
+import SustainabilityPanel from "./SustainabilityPanel";
+import BasemapGalleryWrapper from "./BasemapGalleryWrapper";
 
-import React, { useState } from "react";
-import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
+import React, { useState, useRef } from "react";
 
-function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
-  const [topSoils, setTopSoils] = useState(null);
-  const [soilHealth, setSoilHealth] = useState(null);
-  const [acres, setAcres] = useState(null);
-  const [slope, setSlope] = useState(null);
-  const [topCrops, setTopCrops] = useState(null);
-  const [erosionClass, setErosionClass] = useState(null);
-  const [erosionClassVal, setErosionClassVal] = useState(null);
-  const [currentHealth, setCurrentHealth] = useState(null);
-  const [resultGraphicsLayer, setResultGraphicsLayer] = useState(null);
-  const [croppedImageLayers, setCroppedImageLayers] = useState({});
-  const [health5YearData, setHealth5YearData] = useState(null);
-  const [showUserForm, setShowUserForm] = useState(false);
-  const [showSustainabilityScore, setShowSustainabilityScore] = useState(false);
-  const [formData, setFormData] = useState(null);
-  const [busy, setBusy] = useState(false);
+function LeftSidebar({ sketchLabel, view }) {
+  const fieldAnalysisPanel = useRef();
+  const basemapsPanel = useRef();
+  const aboutPanel = useRef();
 
-  /**
-   * onSketchResultGraphic - handle the drawn graphic
-   * @param {Graphic} graphic the drawn Graphic
-   */
-  const onSketchResultGraphic = (graphic) => {
-    runAnalysis(graphic);
-  };
+  const showPanel = (panel) => {
+    const alreadyActive = panel.current.active;
 
-  /**
-   * Run the analysis
-   * @param {Graphic} graphic
-   */
-  const runAnalysis = async (graphic) => {
-    setBusy(true);
+    [fieldAnalysisPanel, basemapsPanel, aboutPanel].forEach((p) => {
+      p.current.hidden = true;
+      p.current.active = false;
+    });
 
-    let _resultGraphicsLayer = resultGraphicsLayer;
-    if (!_resultGraphicsLayer) {
-      _resultGraphicsLayer = new GraphicsLayer({ title: "Soils" });
-      view.map.add(_resultGraphicsLayer);
-      setResultGraphicsLayer(_resultGraphicsLayer);
+    if (!alreadyActive) {
+      panel.current.hidden = false;
+      panel.current.active = true;
     }
-
-    const newImageLayers = [
-      clipAndGetCrops(graphic.geometry, apiKey),
-      clipAndGetElevation(graphic.geometry, apiKey),
-      clipAndGetErosion(graphic.geometry, apiKey),
-      clipAndGetNdvi(graphic.geometry, apiKey),
-      clipAndGetSsurgo(graphic.geometry, apiKey),
-    ];
-    let newCroppedImageLayers = {};
-    for (const ind in newImageLayers) {
-      const newImageLayer = newImageLayers[ind];
-      const title = newImageLayer.title;
-      if (croppedImageLayers.hasOwnProperty(title))
-        view.map.remove(croppedImageLayers[title]);
-
-      newCroppedImageLayers[title] = newImageLayer;
-      view.map.add(newImageLayer);
-    }
-    setCroppedImageLayers(newCroppedImageLayers);
-
-    _resultGraphicsLayer.removeAll();
-
-    const soilInfo = await getSoils(graphic.geometry, apiKey);
-    _resultGraphicsLayer.addMany(soilInfo.allResults);
-    setTopSoils(soilInfo.topSoils);
-
-    const healthInfo = await getSoilHealth(graphic.geometry, view, apiKey);
-    setSoilHealth(healthInfo);
-
-    const totalAcres = await getAcreage(graphic.geometry, apiKey);
-    setAcres(totalAcres);
-
-    const avgSlope = await getAvgSlope(graphic.geometry, view, apiKey);
-    setSlope(avgSlope);
-
-    const erosionInfo = await getErosionClass(graphic.geometry, view, apiKey);
-    const erosionClass = erosionInfo.description;
-    setErosionClass(erosionClass);
-    setErosionClassVal(erosionInfo.class);
-
-    const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
-    setTopCrops(crops.topCrops);
-
-    const avgNdvi = await getAvgNdvi(graphic.geometry, view, 2019, apiKey);
-    setCurrentHealth(avgNdvi);
-
-    const images = await fetchNdviYearImages(
-      2015,
-      2019,
-      graphic.geometry,
-      apiKey
-    );
-    if (images.length > 0) setHealth5YearData(images[0]);
-
-    setBusy(false);
-  };
-
-  const renderSustainabilityScore = () => {
-    if (showSustainabilityScore) {
-      return (
-        <SustainabilityScore
-          cancelClicked={() => {
-            setShowSustainabilityScore(false);
-          }}
-          userInputs={formData}
-          soilHealth={soilHealth}
-          erosion={erosionClassVal}>
-
-        </SustainabilityScore>
-      )
-    }
-  };
-
-  const renderUserForm = () => {
-    if (showUserForm) {
-      return (
-        <UserForm
-          formSubmitted={(formData) => {
-            setFormData(formData);
-            setShowUserForm(false);
-            setShowSustainabilityScore(true);
-          }}
-        ></UserForm>
-      );
-    } else return "";
-  };
-
-  const renderLeftSidebar = () => {
-    const haveData =
-      topSoils &&
-      soilHealth &&
-      acres &&
-      slope &&
-      topCrops &&
-      erosionClass &&
-      currentHealth &&
-      health5YearData;
-
-    if (busy) {
-      return <img alt="loading..." src={catLoading} width="400"></img>;
-    } else if (!showUserForm && !showSustainabilityScore) {
-      return (
-        <>
-          <EsriSketch
-            label={sketchLabel}
-            view={view}
-            onSketchResultGraphic={onSketchResultGraphic}
-          ></EsriSketch>
-
-          <AnalysisResult
-            topSoils={topSoils}
-            soilHealth={soilHealth}
-            acres={acres}
-            slope={slope}
-            topCrops={topCrops}
-            erosionClass={erosionClass}
-            currentHealth={currentHealth}
-            health5YearData={health5YearData}
-          ></AnalysisResult>
-
-          <button
-            style={{
-              marginTop: "8px",
-              height: "40px",
-              display: haveData && !busy ? "" : "none",
-            }}
-            onClick={() => {
-              setShowUserForm(true);
-            }}
-          >
-            {strings.sustainabilityButton}
-          </button>
-        </>
-      );
-    } else return "";
   };
 
   return (
-    <div
-      style={{
-        overflow: "auto",
-        width: "450px",
-        borderRight: "solid",
-        display: "flex",
-        flexDirection: "column",
-        padding: "10px",
-      }}
+    <CalciteShellPanel
+      slot="primary-panel"
+      style={{ display: "flex" }}
+      widthScale="l"
     >
-      {renderLeftSidebar()}
-      {renderUserForm()}
-      {renderSustainabilityScore()}
-    </div>
+      <CalciteActionBar slot="action-bar">
+        <CalciteAction
+          icon="layers"
+          text="FieldAnalysis"
+          onClick={() => {
+            showPanel(fieldAnalysisPanel);
+          }}
+        ></CalciteAction>
+        <CalciteAction
+          icon="basemap"
+          text="Basemaps"
+          onClick={() => {
+            showPanel(basemapsPanel);
+          }}
+        ></CalciteAction>
+        <CalciteAction
+          icon="information"
+          text="Information"
+          onClick={() => {
+            showPanel(aboutPanel);
+          }}
+        ></CalciteAction>
+      </CalciteActionBar>
+
+      <CalcitePanel
+        heading="Field Analysis"
+        width-scale="l"
+        ref={fieldAnalysisPanel}
+      >
+        <SustainabilityPanel
+          sketchLabel={sketchLabel}
+          view={view}
+        ></SustainabilityPanel>
+      </CalcitePanel>
+      <CalcitePanel
+        heading="Basemaps"
+        height-scale="l"
+        width-scale="m"
+        hidden
+        ref={basemapsPanel}
+      >
+        <BasemapGalleryWrapper view={view}></BasemapGalleryWrapper>
+      </CalcitePanel>
+
+      <CalcitePanel heading="About" width-scale="m" hidden ref={aboutPanel}>
+        <p style={{ padding: "0.75rem" }}>
+          Field Sustainability Helper is a web tool to help analyze agricultural
+          holdings for sustainable practices.
+        </p>
+      </CalcitePanel>
+    </CalciteShellPanel>
   );
 }
 

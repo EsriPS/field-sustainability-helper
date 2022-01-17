@@ -49,4 +49,5 @@ export const strings = {
   submitButton: "Submit",
   sustainabilityScoreLabel: "Sustainability Score: ",
   cancel: "Cancel",
+  back: "Back",
 };
