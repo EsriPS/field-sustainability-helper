@@ -84,36 +84,36 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
 
     _resultGraphicsLayer.removeAll();
 
-    const soilInfo = await getSoils(graphic.geometry, apiKey);
+    const [
+      soilInfo,
+      healthInfo,
+      totalAcres,
+      avgSlope,
+      erosionInfo,
+      crops,
+      avgNdvi,
+      images,
+    ] = await Promise.all([
+      getSoils(graphic.geometry, apiKey),
+      getSoilHealth(graphic.geometry, view, apiKey),
+      getAcreage(graphic.geometry, apiKey),
+      getAvgSlope(graphic.geometry, view, apiKey),
+      getErosionClass(graphic.geometry, view, apiKey),
+      getCrops(graphic.geometry, view, 2020, apiKey),
+      getAvgNdvi(graphic.geometry, view, 2019, apiKey),
+      fetchNdviYearImages(2015, 2019, graphic.geometry, apiKey),
+    ]);
+
     _resultGraphicsLayer.addMany(soilInfo.allResults);
     setTopSoils(soilInfo.topSoils);
-
-    const healthInfo = await getSoilHealth(graphic.geometry, view, apiKey);
     setSoilHealth(healthInfo);
-
-    const totalAcres = await getAcreage(graphic.geometry, apiKey);
     setAcres(totalAcres);
-
-    const avgSlope = await getAvgSlope(graphic.geometry, view, apiKey);
     setSlope(avgSlope);
-
-    const erosionInfo = await getErosionClass(graphic.geometry, view, apiKey);
     const erosionClass = erosionInfo.description;
     setErosionClass(erosionClass);
     setErosionClassVal(erosionInfo.class);
-
-    const crops = await getCrops(graphic.geometry, view, 2020, apiKey);
     setTopCrops(crops.topCrops);
-
-    const avgNdvi = await getAvgNdvi(graphic.geometry, view, 2019, apiKey);
     setCurrentHealth(avgNdvi);
-
-    const images = await fetchNdviYearImages(
-      2015,
-      2019,
-      graphic.geometry,
-      apiKey
-    );
     if (images.length > 0) setHealth5YearData(images[0]);
 
     setBusy(false);
