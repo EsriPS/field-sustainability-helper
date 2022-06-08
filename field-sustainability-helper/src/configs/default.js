@@ -11,7 +11,7 @@ export const services = {
     elevation:
       "https://elevation.arcgis.com/arcgis/rest/services/NED30m/ImageServer",
     crops:
-      "https://pdiimagery.azurecloudgov.us/arcgis/rest/services/CDL_WM/ImageServer",
+      "https://pdi.scinet.usda.gov/image/rest/services/CDL_WM/ImageServer",
     erosion:
       "https://landscape11.arcgis.com/arcgis/rest/services/USA_Soils_Erosion_Class/ImageServer",
     ssurgo:
