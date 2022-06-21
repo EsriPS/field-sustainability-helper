@@ -2,7 +2,7 @@ import EsriSketch from "./EsriSketch";
 import AnalysisResult from "./AnalysisResult";
 import UserForm from "./UserForm";
 import SustainabilityScore from "./SustainabilityScore";
-import catLoading from "../images/cat-loading.gif";
+import progressBar from "../images/progressBar.gif";
 import { CalcitePanel, CalciteButton } from "@esri/calcite-components-react";
 import {
   getSoils,
@@ -116,6 +116,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     setCurrentHealth(avgNdvi);
     if (images.length > 0) setHealth5YearData(images[0]);
 
+    
     setBusy(false);
   };
 
@@ -170,7 +171,7 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
     // console.log("haveData", haveData);
 
     if (busy) {
-      return <img alt="loading..." src={catLoading}></img>;
+      return <img alt="loading..." src={progressBar} className='progressBar'></img>;
     } else if (!showUserForm && !showSustainabilityScore) {
       return (
         <>
