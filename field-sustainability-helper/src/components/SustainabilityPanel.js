@@ -40,12 +40,15 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
   const [showSustainabilityScore, setShowSustainabilityScore] = useState(false);
   const [formData, setFormData] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
+  const [displayMessage, setDisplayMessage] = useState("");
 
   /**
    * onSketchResultGraphic - handle the drawn graphic
    * @param {Graphic} graphic the drawn Graphic
    */
   const onSketchResultGraphic = (graphic) => {
+    setErrorMessage(false);
     runAnalysis(graphic);
   };
 
@@ -102,7 +105,10 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
       getCrops(graphic.geometry, view, 2020, apiKey),
       getAvgNdvi(graphic.geometry, view, 2019, apiKey),
       fetchNdviYearImages(2015, 2019, graphic.geometry, apiKey),
-    ]);
+    ]).catch((err) => { console.log(err);
+        setErrorMessage(true) ;
+        setBusy(false);
+        setDisplayMessage(err.message); });
 
     _resultGraphicsLayer.addMany(soilInfo.allResults);
     setTopSoils(soilInfo.topSoils);
@@ -204,6 +210,16 @@ function LeftSidebar({ sketchLabel, view, drawnGeometry }) {
           >
             {strings.sustainabilityButton}
           </CalciteButton>
+
+          <p style={{
+            display: errorMessage ? "block" : "none",
+            fontWeight: 600,
+            paddingTop: "250px",
+            paddingLeft: "210px",
+            fontSize: "25px"
+          }}>
+          {displayMessage}
+        </p>
         </>
       );
     } else return "";
